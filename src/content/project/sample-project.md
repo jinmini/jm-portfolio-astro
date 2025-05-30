@@ -1,0 +1,61 @@
+---
+title: "Astro 5.0 포트폴리오 사이트"
+description: "최신 Astro 5.0과 Content Layer API를 활용한 개인 포트폴리오 사이트"
+thumbnail: "/images/projects/astro-portfolio.webp"
+date: 2025-01-29
+tags: ["Astro", "TypeScript", "Tailwind CSS", "React"]
+links:
+  github: "https://github.com/username/astro-portfolio"
+  site: "https://portfolio.example.com"
+featured: true
+---
+
+# Astro 5.0 포트폴리오 사이트
+
+최신 **Astro 5.0**의 새로운 기능들을 활용하여 구축한 개인 포트폴리오 사이트입니다.
+
+## ✨ 주요 특징
+
+- **Content Layer API**: Astro 5.0의 새로운 콘텐츠 관리 시스템
+- **Server Islands**: 선택적 서버 렌더링으로 성능 최적화
+- **View Transitions**: 부드러운 페이지 전환 효과
+- **React 19**: 최신 React와 함께 사용하는 하이브리드 구조
+
+## 🛠️ 기술 스택
+
+- **Framework**: Astro 5.0
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS v4
+- **Language**: TypeScript
+- **Deployment**: Vercel
+
+## 📋 구현 기능
+
+### 1. 반응형 디자인
+모든 디바이스에서 최적화된 사용자 경험을 제공합니다.
+
+### 2. 애니메이션 효과
+- Hover 효과
+- 페이지 전환 애니메이션
+- 스크롤 기반 애니메이션
+
+### 3. SEO 최적화
+- 메타 태그 최적화
+- 구조화된 데이터
+- 사이트맵 자동 생성
+
+## 🚀 성능 최적화
+
+- **Zero JavaScript**: 필요한 경우에만 JavaScript 로드
+- **Image Optimization**: 자동 이미지 최적화
+- **Static Generation**: 빠른 로딩을 위한 정적 생성
+
+## 📈 프로젝트 성과
+
+- **Lighthouse Score**: 100점 (모든 영역)
+- **첫 로딩 시간**: 1초 이내
+- **SEO 점수**: 완벽한 최적화
+
+---
+
+이 프로젝트를 통해 Astro 5.0의 새로운 기능들을 깊이 있게 탐구하고, 현대적인 웹 개발 기술을 활용한 고성능 사이트를 구축할 수 있었습니다. 

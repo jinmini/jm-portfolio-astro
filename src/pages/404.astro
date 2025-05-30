@@ -1,0 +1,34 @@
+---
+import { Responsive } from '../components/common';
+import Section from '../components/common/Section.astro';
+import Layout from '../layouts/Layout.astro';
+
+const pageTitle = `404 - 포트폴리오`;
+---
+
+<Layout title={pageTitle} hasHeaderBackground={true}>
+  <Section className="flex flex-1 flex-col">
+    <Responsive className="flex flex-1 items-center justify-center py-12 lg:py-20">
+      <div class="flex w-full flex-col items-center gap-4 lg:gap-6">
+        <div class="text-8xl mb-4">🔍</div>
+        <div class="flex flex-col items-center">
+          <p class="text-center text-2xl font-semibold text-black lg:text-left">
+            앗! 이곳은 <span class="text-blue-600">없는 페이지</span>입니다.
+          </p>
+          <div class="mt-4 flex flex-col items-center gap-1">
+            <p class="text-gray-400">방문하신 링크는 삭제되었거나 잘못된 주소입니다.</p>
+            <p class="text-gray-400">메인 페이지로 이동해 주세요.</p>
+          </div>
+          <a
+            class="mt-6 block w-full rounded-md bg-blue-600 px-12 py-4 text-center font-medium text-white lg:transition-colors lg:hover:bg-blue-700"
+            href="/"
+            title="메인 페이지로 이동"
+            aria-label="메인 페이지로 이동"
+          >
+            메인으로 이동하기
+          </a>
+        </div>
+      </div>
+    </Responsive>
+  </Section>
+</Layout> 

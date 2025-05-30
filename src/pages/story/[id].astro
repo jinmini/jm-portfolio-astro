@@ -1,0 +1,220 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { Responsive } from '../../components/common';
+import Section from '../../components/common/Section.astro';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const stories = await getCollection('story');
+  const publishedStories = stories.filter(story => !story.data.draft);
+  return publishedStories.map((story) => ({
+    params: { id: story.id },
+    props: { story },
+  }));
+}
+
+type Props = {
+  story: CollectionEntry<'story'>;
+};
+
+const { story } = Astro.props;
+const { Content } = await story.render();
+const pageTitle = `${story.data.title} - 포트폴리오`;
+---
+
+<Layout title={pageTitle} hasHeaderBackground={true}>
+  <Section>
+    <Responsive>
+      <div class="py-12">
+        <!-- 뒤로가기 버튼 -->
+        <div class="mb-8">
+          <a 
+            href="/story/all/page/1"
+            class="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            스토리 목록으로 돌아가기
+          </a>
+        </div>
+
+        <!-- 스토리 헤더 -->
+        <header class="mb-12">
+          <div class="grid lg:grid-cols-2 gap-8 items-center">
+            <!-- 썸네일 -->
+            <div class="order-2 lg:order-1">
+              <div class="relative rounded-2xl overflow-hidden shadow-lg">
+                {story.data.thumbnail ? (
+                  <img 
+                    src={story.data.thumbnail} 
+                    alt={story.data.title}
+                    class="w-full h-64 lg:h-80 object-cover"
+                  />
+                ) : (
+                  <div class="w-full h-64 lg:h-80 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white text-8xl">
+                    📖
+                  </div>
+                )}
+                <span class="absolute top-4 left-4 bg-white/90 text-gray-900 px-3 py-2 rounded-full text-sm font-semibold">
+                  {story.data.category}
+                </span>
+              </div>
+            </div>
+
+            <!-- 스토리 정보 -->
+            <div class="order-1 lg:order-2">
+              <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                {story.data.title}
+              </h1>
+              <p class="text-xl text-gray-600 mb-6">
+                {story.data.description}
+              </p>
+
+              <!-- 메타 정보 -->
+              <div class="space-y-4 mb-8">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <span class="text-sm font-medium text-gray-500">게시일</span>
+                    <p class="text-gray-900">{story.data.date.toLocaleDateString('ko-KR')}</p>
+                  </div>
+                  <div>
+                    <span class="text-sm font-medium text-gray-500">카테고리</span>
+                    <p class="text-gray-900">{story.data.category}</p>
+                  </div>
+                </div>
+                
+                <!-- 태그들 -->
+                <div>
+                  <span class="text-sm font-medium text-gray-500 block mb-2">태그</span>
+                  <div class="flex flex-wrap gap-2">
+                    {story.data.tags.map((tag) => (
+                      <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <!-- 소셜 공유 버튼들 -->
+              <div class="flex flex-wrap gap-4">
+                <button 
+                  onclick={`navigator.share && navigator.share({title: '${story.data.title}', url: window.location.href})`}
+                  class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                  </svg>
+                  공유하기
+                </button>
+                
+                <a 
+                  href={`/story/${story.data.category}/page/1`}
+                  class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                  </svg>
+                  {story.data.category} 더보기
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- 스토리 상세 내용 -->
+        <article class="prose prose-lg max-w-none">
+          <Content />
+        </article>
+
+        <!-- 관련 스토리 -->
+        <footer class="mt-16 pt-8 border-t border-gray-200">
+          <div class="text-center">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">더 많은 스토리 보기</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+              <a 
+                href="/story/all/page/1"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                전체 스토리
+              </a>
+              <a 
+                href={`/story/${story.data.category}/page/1`}
+                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                {story.data.category} 카테고리
+              </a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </Responsive>
+  </Section>
+</Layout>
+
+<style>
+  .prose {
+    color: #374151;
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    color: #111827;
+    font-weight: 700;
+  }
+  .prose h1 {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+  .prose h2 {
+    font-size: 1.875rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+  .prose h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .prose p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+  }
+  .prose ul, .prose ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+  .prose strong {
+    font-weight: 600;
+    color: #111827;
+  }
+  .prose code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+  .prose blockquote {
+    border-left: 4px solid #d1d5db;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #6b7280;
+  }
+  .prose pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .prose pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+</style> 

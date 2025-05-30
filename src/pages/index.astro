@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout title="포트폴리오 - 메인">
+	<!-- Hero Section -->
+	<section class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-white">
+		<div class="container mx-auto px-4 text-center">
+			<h1 class="text-5xl md:text-7xl font-bold text-gray-900 mb-6">
+				안녕하세요! 👋
+			</h1>
+			<p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto">
+				창의적인 개발과 흥미로운 이야기가 가득한 공간입니다.
+			</p>
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<a 
+					href="/project/page/1" 
+					class="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 font-semibold"
+				>
+					프로젝트 보기
+				</a>
+				<a 
+					href="/about" 
+					class="px-8 py-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 font-semibold"
+				>
+					소개 보기
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- Projects Preview Section -->
+	<section class="py-20 bg-white">
+		<div class="container mx-auto px-4">
+			<h2 class="text-4xl font-bold text-center text-gray-900 mb-12">
+				최근 프로젝트
+			</h2>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+				<!-- 프로젝트 카드들이 여기에 추가될 예정 -->
+				<div class="group bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
+					<div class="h-48 bg-gradient-to-br from-blue-400 to-purple-500"></div>
+					<div class="p-6">
+						<h3 class="text-xl font-semibold text-gray-900 mb-2">프로젝트 1</h3>
+						<p class="text-gray-600 mb-4">프로젝트 설명이 들어갈 예정입니다.</p>
+						<span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">React</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Stories Preview Section -->
+	<section class="py-20 bg-gray-50">
+		<div class="container mx-auto px-4">
+			<h2 class="text-4xl font-bold text-center text-gray-900 mb-12">
+				최신 스토리
+			</h2>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+				<!-- 스토리 카드들이 여기에 추가될 예정 -->
+				<div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
+					<div class="h-48 bg-gradient-to-br from-green-400 to-blue-500"></div>
+					<div class="p-6">
+						<h3 class="text-xl font-semibold text-gray-900 mb-2">스토리 1</h3>
+						<p class="text-gray-600 mb-4">스토리 내용이 들어갈 예정입니다.</p>
+						<span class="text-sm text-gray-500">2025.01.29</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</Layout>
