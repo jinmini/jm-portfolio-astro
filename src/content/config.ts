@@ -32,6 +32,7 @@ const story = defineCollection({
       site: z.string().optional()
     }).optional(),
     featured: z.boolean().default(false),
+    category: z.string(),
   }),
 });
 
