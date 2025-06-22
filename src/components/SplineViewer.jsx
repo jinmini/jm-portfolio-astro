@@ -1,68 +1,63 @@
-import { useEffect, useRef, useState } from 'react';
+import Spline from '@splinetool/react-spline';
+import { useState } from 'react';
 
 export default function SplineViewer({ 
   url = "https://prod.spline.design/hblmvsuZDlgmNL41/scene.splinecode",
   className = "",
-  background = "transparent"
+  onLoad
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
-  const containerRef = useRef(null);
+  const [hasError, setHasError] = useState(false);
 
-  useEffect(() => {
-    // Spline Viewer 스크립트 로드
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.src = 'https://unpkg.com/@splinetool/viewer@1.10.12/build/spline-viewer.js';
-    
-    script.onload = () => {
-      // 스크립트가 로드된 후 spline-viewer 엘리먼트 생성
-      if (containerRef.current) {
-        const splineViewer = document.createElement('spline-viewer');
-        splineViewer.setAttribute('url', url);
-        splineViewer.style.width = '100%';
-        splineViewer.style.height = '100%';
-        splineViewer.style.background = background;
-        
-        // 로드 이벤트 리스너
-        splineViewer.addEventListener('load', () => {
-          setIsLoaded(true);
-        });
-        
-        // 컨테이너에 추가
-        containerRef.current.appendChild(splineViewer);
-      }
-    };
-
-    // 이미 스크립트가 로드되어 있는지 확인
-    const existingScript = document.querySelector('script[src="https://unpkg.com/@splinetool/viewer@1.10.12/build/spline-viewer.js"]');
-    if (!existingScript) {
-      document.head.appendChild(script);
-    } else {
-      script.onload();
+  const handleLoad = (spline) => {
+    setIsLoaded(true);
+    setHasError(false);
+    console.log('Spline 모델이 성공적으로 로드되었습니다!');
+    if (onLoad) {
+      onLoad(spline);
     }
+  };
 
-    // 클린업
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
-    };
-  }, [url, background]);
+  const handleError = (error) => {
+    setHasError(true);
+    setIsLoaded(false);
+    console.error('Spline 모델 로드 실패:', error);
+  };
 
   return (
     <div className={`relative ${className}`} style={{ minHeight: '500px' }}>
       {/* 로딩 인디케이터 */}
-      {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 z-10">
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50/80 to-purple-50/80 z-10 backdrop-blur-sm">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600 text-sm">3D 환경을 불러오는 중...</p>
+            <p className="text-gray-600 text-sm font-medium">3D 환경을 불러오는 중...</p>
+          </div>
+        </div>
+      )}
+
+      {/* 에러 상태 */}
+      {hasError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+          <div className="text-center text-gray-600">
+            <div className="text-4xl mb-4">⚠️</div>
+            <p className="text-lg font-medium mb-2">3D 모델을 불러올 수 없습니다</p>
+            <p className="text-sm">네트워크 연결을 확인해주세요</p>
           </div>
         </div>
       )}
       
-      {/* Spline 뷰어 컨테이너 */}
-      <div ref={containerRef} className="w-full h-full" />
+      {/* Spline 컴포넌트 */}
+      <Spline
+        scene={url}
+        onLoad={handleLoad}
+        onError={handleError}
+        style={{
+          width: '100%',
+          height: '100%',
+          minHeight: '500px'
+        }}
+      />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import AboutMe from '../components/about/AboutMe.astro';
 import { Responsive } from '../components/common';
 import Section from '../components/common/Section.astro';
 import Layout from '../layouts/Layout.astro';
+import ESGTimeline from '../components/esg/ESGTimeline.tsx';
 
 const pageTitle = `소개 - 포트폴리오`;
 ---
@@ -35,6 +36,8 @@ const pageTitle = `소개 - 포트폴리오`;
           <li>모바일 반응형 UI/UX 개선으로 사용자 만족도 25% 향상</li>
           <li>마이크로서비스 아키텍처 도입으로 배포 효율성 50% 증대</li>
         </ul>
+
+        <ESGTimeline client:visible />
 
         <h1>🤝 Communities</h1>
 
