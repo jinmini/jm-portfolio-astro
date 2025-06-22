@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ESGTimeline.css';
+import styles from './ESGTimeline.module.scss';
 
 interface TimelineItem {
   id: string;
@@ -10,6 +10,10 @@ interface TimelineItem {
   category: 'E' | 'S' | 'G';
   isHighlight?: boolean;
   impact?: string;
+  thumbnail?: string;
+  role?: string;
+  techStack?: string[];
+  achievements?: string[];
 }
 
 const timelineData: TimelineItem[] = [
@@ -22,7 +26,15 @@ const timelineData: TimelineItem[] = [
     description: 'AI 기반 탄소 배출량 실시간 모니터링 및 최적화 솔루션으로 연간 1,200톤 CO2 감축 달성',
     category: 'E',
     isHighlight: true,
-    impact: '연간 1,200톤 CO2 감축'
+    impact: '연간 1,200톤 CO2 감축',
+    thumbnail: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop',
+    role: 'AI 솔루션 아키텍트 & 프로젝트 리드',
+    techStack: ['Python', 'TensorFlow', 'React', 'AWS', 'PostgreSQL'],
+    achievements: [
+      'AI 모델 정확도 95% 달성',
+      '실시간 대시보드 구축으로 의사결정 시간 80% 단축',
+      '연간 탄소 배출량 1,200톤 감축 성과'
+    ]
   },
   {
     id: 'e2',
@@ -51,7 +63,15 @@ const timelineData: TimelineItem[] = [
     description: '조직 다양성 측정 및 편향성 감지 AI 분석 도구로 포용적 조직문화 구축 지원',
     category: 'S',
     isHighlight: true,
-    impact: '다양성 지수 40% 개선'
+    impact: '다양성 지수 40% 개선',
+    thumbnail: 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&h=300&fit=crop',
+    role: '풀스택 개발자 & 데이터 분석가',
+    techStack: ['Python', 'scikit-learn', 'React', 'D3.js', 'MongoDB'],
+    achievements: [
+      '편향성 감지 알고리즘 개발로 채용 공정성 30% 향상',
+      '다양성 지표 시각화 대시보드 구축',
+      '10개 기업 도입 및 조직문화 개선 컨설팅'
+    ]
   },
   {
     id: 's2',
@@ -80,7 +100,15 @@ const timelineData: TimelineItem[] = [
     description: 'NLP 기술로 ESG 보고서 작성 시간 70% 단축 및 데이터 정확도 95% 향상',
     category: 'G',
     isHighlight: true,
-    impact: '작성 시간 70% 단축'
+    impact: '작성 시간 70% 단축',
+    thumbnail: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop',
+    role: '기술 팀 리드 & NLP 엔지니어',
+    techStack: ['Python', 'BERT', 'FastAPI', 'Vue.js', 'Elasticsearch'],
+    achievements: [
+      'GRI, TCFD, SASB 표준 자동 매핑 시스템 개발',
+      '다국어 지원(5개 언어) 및 실시간 번역 기능',
+      '20개 대기업 도입 및 연간 500시간 업무 절감'
+    ]
   },
   {
     id: 'g2',
@@ -104,6 +132,17 @@ const timelineData: TimelineItem[] = [
 
 const ESGTimeline: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'E' | 'S' | 'G'>('all');
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedItems(newExpanded);
+  };
 
   const getFilteredData = () => {
     if (activeTab === 'all') {
@@ -134,69 +173,177 @@ const ESGTimeline: React.FC = () => {
   };
 
   return (
-    <div className="esg-timeline-container">
-      <h2 className="esg-timeline-title">
-        <span className="title-icon">🌟</span>
+    <div className={styles.esgTimelineContainer}>
+      <h2 className={styles.esgTimelineTitle}>
+        <span className={styles.titleIcon}>🌟</span>
         ESG 활동 연혁
       </h2>
-      <p className="esg-timeline-subtitle">
+      <p className={styles.esgTimelineSubtitle}>
         환경(E), 사회(S), 지배구조(G) 각 영역에서의 전문적인 프로젝트와 성과
       </p>
       
-      <div className="esg-tabs">
+      <div className={styles.esgTabs}>
         <button
-          className={`esg-tab ${activeTab === 'all' ? 'active' : ''}`}
+          className={`${styles.esgTab} ${activeTab === 'all' ? styles.active : ''}`}
           onClick={() => setActiveTab('all')}
         >
           전체
         </button>
         <button
-          className={`esg-tab ${activeTab === 'E' ? 'active' : ''}`}
+          className={`${styles.esgTab} ${activeTab === 'E' ? styles.active : ''}`}
           onClick={() => setActiveTab('E')}
         >
-          <span className="tab-icon">🌱</span>
+          <span className={styles.tabIcon}>🌱</span>
           Environment
         </button>
         <button
-          className={`esg-tab ${activeTab === 'S' ? 'active' : ''}`}
+          className={`${styles.esgTab} ${activeTab === 'S' ? styles.active : ''}`}
           onClick={() => setActiveTab('S')}
         >
-          <span className="tab-icon">👥</span>
+          <span className={styles.tabIcon}>👥</span>
           Social
         </button>
         <button
-          className={`esg-tab ${activeTab === 'G' ? 'active' : ''}`}
+          className={`${styles.esgTab} ${activeTab === 'G' ? styles.active : ''}`}
           onClick={() => setActiveTab('G')}
         >
-          <span className="tab-icon">🏛️</span>
+          <span className={styles.tabIcon}>🏛️</span>
           Governance
         </button>
       </div>
 
-      <div className="timeline-wrapper">
-        <div className="timeline-line"></div>
-        {filteredData.map((item, index) => (
-          <div key={item.id} className="timeline-item">
-            <div className="timeline-year">{item.year}</div>
-            <div className="timeline-dot" style={{ backgroundColor: getCategoryColor(item.category) }}></div>
-            <div className="timeline-content">
-              <div className="timeline-header">
-                <h3 className="timeline-title">{item.title}</h3>
-                <span className="timeline-category" style={{ color: getCategoryColor(item.category) }}>
-                  {getCategoryIcon(item.category)} {item.category}
-                </span>
-              </div>
-              <p className="timeline-description">{item.description}</p>
-              {item.impact && (
-                <div className="timeline-impact">
-                  <span className="impact-icon">📊</span>
-                  <span className="impact-text">{item.impact}</span>
-                </div>
-              )}
-            </div>
+      {activeTab === 'all' ? (
+        // 전체 탭의 디자인: 중앙 타임라인 + 좌우 지그재그
+        <div className={styles.timelineWrapperCenter}>
+          <div className={styles.timelineLineCenter}>
+            {filteredData.map((_, index) => (
+              <div key={index} className={styles.timelineDotCenter}></div>
+            ))}
           </div>
-        ))}
-      </div>
+          {filteredData.map((item, index) => {
+            const isExpanded = expandedItems.has(item.id);
+            const isLeft = index % 2 === 0;
+            
+            return (
+              <div 
+                key={item.id} 
+                className={`${styles.timelineItemCenter} ${isLeft ? styles.left : styles.right}`}
+              >
+                <div className={styles.timelineContentCenter}>
+                  <div className={styles.contentHeader}>
+                    <div className={styles.yearSection}>
+                      <span className={styles.year}>{item.year}</span>
+                      <span className={styles.period}>{item.period}</span>
+                    </div>
+                    {item.thumbnail && (
+                      <img 
+                        src={item.thumbnail} 
+                        alt={item.title}
+                        className={styles.thumbnail}
+                      />
+                    )}
+                  </div>
+                  
+                  <h3 className={styles.contentTitle}>{item.title}</h3>
+                  <p className={styles.contentDescription}>{item.description}</p>
+                  
+                  <div className={styles.contentFooter}>
+                    <span className={styles.categoryBadge}>
+                      {getCategoryIcon(item.category)} {item.category}
+                    </span>
+                    <button 
+                      className={styles.accordionButton}
+                      onClick={() => toggleExpanded(item.id)}
+                      aria-expanded={isExpanded}
+                    >
+                      {isExpanded ? '접기' : '상세 보기'}
+                      <span className={styles.accordionIcon}>
+                        {isExpanded ? '▲' : '▼'}
+                      </span>
+                    </button>
+                  </div>
+                  
+                  {isExpanded && (
+                    <div className={styles.expandedContent}>
+                      {item.thumbnail && (
+                        <img 
+                          src={item.thumbnail} 
+                          alt={item.title}
+                          className={styles.expandedImage}
+                        />
+                      )}
+                      
+                      {item.role && (
+                        <div className={styles.detailSection}>
+                          <h4 className={styles.detailTitle}>👨‍💻 나의 역할</h4>
+                          <p className={styles.detailText}>{item.role}</p>
+                        </div>
+                      )}
+                      
+                      {item.techStack && (
+                        <div className={styles.detailSection}>
+                          <h4 className={styles.detailTitle}>🔧 기술 스택</h4>
+                          <div className={styles.techStack}>
+                            {item.techStack.map((tech, idx) => (
+                              <span key={idx} className={styles.techBadge}>
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {item.achievements && (
+                        <div className={styles.detailSection}>
+                          <h4 className={styles.detailTitle}>🏆 주요 성과</h4>
+                          <ul className={styles.achievementList}>
+                            {item.achievements.map((achievement, idx) => (
+                              <li key={idx}>{achievement}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {item.impact && (
+                        <div className={styles.impactHighlight}>
+                          <span className={styles.impactIcon}>📊</span>
+                          <span className={styles.impactText}>{item.impact}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        // 카테고리별 탭의 디자인 (기존 유지)
+        <div className={styles.timelineWrapper}>
+          <div className={styles.timelineLine}></div>
+          {filteredData.map((item, index) => (
+            <div key={item.id} className={styles.timelineItem}>
+              <div className={styles.timelineYear}>{item.year}</div>
+              <div className={styles.timelineDot} style={{ backgroundColor: getCategoryColor(item.category) }}></div>
+              <div className={styles.timelineContent}>
+                <div className={styles.timelineHeader}>
+                  <h3 className={styles.timelineTitle}>{item.title}</h3>
+                  <span className={styles.timelineCategory} style={{ color: getCategoryColor(item.category) }}>
+                    {getCategoryIcon(item.category)} {item.category}
+                  </span>
+                </div>
+                <p className={styles.timelineDescription}>{item.description}</p>
+                {item.impact && (
+                  <div className={styles.timelineImpact}>
+                    <span className={styles.impactIcon}>📊</span>
+                    <span className={styles.impactText}>{item.impact}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
