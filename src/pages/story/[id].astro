@@ -2,7 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { Responsive } from '../../components/common';
 import Section from '../../components/common/Section.astro';
-import Layout from '../../layouts/Layout.astro';
+import Layout from '../../layouts/MainGridLayout.astro';
 
 export async function getStaticPaths() {
   const stories = await getCollection('story');
@@ -23,7 +23,7 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
 ---
 
 <Layout title={pageTitle} hasHeaderBackground={true}>
-  <Section>
+  <Section size="narrow">
     <Responsive>
       <div class="py-12">
         <!-- 뒤로가기 버튼 -->

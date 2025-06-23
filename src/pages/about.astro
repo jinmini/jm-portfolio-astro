@@ -3,14 +3,14 @@ import AboutMarkdownRenderer from '../components/about/AboutMarkdownRenderer.ast
 import AboutMe from '../components/about/AboutMe.astro';
 import { Responsive } from '../components/common';
 import Section from '../components/common/Section.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from '../layouts/MainGridLayout.astro';
 import ESGTimeline from '../components/esg/ESGTimeline.tsx';
 
 const pageTitle = `소개 - 포트폴리오`;
 ---
 
 <Layout title={pageTitle} hasHeaderBackground={true}>
-  <Section>
+  <Section size="narrow">
     <Responsive client:load>
       <AboutMarkdownRenderer>
         <h1>About Me</h1>

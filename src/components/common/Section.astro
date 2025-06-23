@@ -3,11 +3,26 @@ import { twMerge } from 'tailwind-merge';
 
 type Props = {
   className?: string;
+  size?: 'narrow' | 'normal';
 };
 
-const { className } = Astro.props;
+const { className, size = 'normal' } = Astro.props;
+
+// 크기에 따른 최대 너비 설정
+const maxWidthClass = size === 'narrow' ? 'max-w-3xl' : 'max-w-5xl';
+// narrow: max-w-3xl (768px)
+// normal: max-w-5xl (1024px) 
 ---
 
-<section class={twMerge('mb-20 mt-12 lg:mb-28 lg:mt-20', className)}>
+<section class={twMerge(
+  // 기본 여백
+  'mb-20 mt-12 lg:mb-28 lg:mt-20',
+  // 반응형 padding
+  'px-4 md:px-6 lg:px-8',
+  // 중앙 정렬 및 최대 너비
+  'mx-auto',
+  maxWidthClass,
+  className
+)}>
   <slot />
 </section> 

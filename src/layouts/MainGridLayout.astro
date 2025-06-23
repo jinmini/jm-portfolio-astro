@@ -1,0 +1,52 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { MobileMenuButton } from '../components/common/Header/MobileMenuButton.tsx';
+import { twMerge } from 'tailwind-merge';
+
+
+export interface Props {
+	title: string;
+	description?: string;
+	hasHeaderBackground?: boolean;
+}
+
+const { title, description, hasHeaderBackground = false } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<slot name="meta" slot="meta" />
+	
+	<header class={twMerge(
+		'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+		hasHeaderBackground ? 'bg-white/90 backdrop-blur-sm border-b border-gray-200' : 'bg-transparent'
+	)}>
+		<nav class="container mx-auto px-4 h-16 flex items-center justify-between">
+			<a href="/" class="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
+				Portfolio
+			</a>
+			
+			<!-- 데스크톱 네비게이션 -->
+			<ul class="hidden lg:flex space-x-6">
+				<li><a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors">소개</a></li>
+				<li><a href="/project/page/1" class="text-gray-700 hover:text-blue-600 transition-colors">프로젝트</a></li>
+				<li><a href="/story/all/page/1" class="text-gray-700 hover:text-blue-600 transition-colors">스토리</a></li>
+			</ul>
+			
+			<!-- 모바일 햄버거 메뉴 -->
+			<MobileMenuButton client:load />
+		</nav>
+	</header>
+	
+	<main class={twMerge(
+		'min-h-[calc(100%-160px)] lg:min-h-[calc(100%-200px)] flex flex-col',
+		hasHeaderBackground && 'pt-16'
+	)}>
+		<slot />
+	</main>
+	
+	<footer class="bg-gray-50 border-t border-gray-200 py-8 mt-20">
+		<div class="container mx-auto px-4 text-center text-gray-600">
+			<p>&copy; 2025. All rights reserved.</p>
+		</div>
+	</footer>
+</BaseLayout>

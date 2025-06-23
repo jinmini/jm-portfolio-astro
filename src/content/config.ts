@@ -24,7 +24,7 @@ const project = defineCollection({
 const story = defineCollection({
   type: 'content', 
   schema: baseContentSchema.extend({
-    category: z.enum(['Notion', 'Obsidian', 'n8n', 'FastAPI', 'Next.js']),
+    category: z.array(z.enum(['성장', 'Notion', 'Obsidian', 'n8n', 'FastAPI', 'Next.js'])),
   }),
 });
 

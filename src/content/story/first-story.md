@@ -3,8 +3,8 @@ title: "디지털 호더 탈출기"
 description: "지식관리의 새로운 세상으로 당신을 초대합니다."
 thumbnail: "/images/stories/growth-story.webp"
 date: 2025-05-30
-tags: ["개발", "성장", "경험", "React"]
-category: "성장"
+tags: ["Notion", "Obsidian", "n8n", "FastAPI", "Next.js"]
+category: ["성장", "Notion", "Obsidian", "n8n", "FastAPI", "Next.js"]
 draft: false
 ---
 
