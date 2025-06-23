@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/MainGridLayout.astro';
+import Section from '../components/common/Section.astro';
 import SplineViewer from '../components/SplineViewer.jsx';
 import { getCollection } from 'astro:content';
 import { ProjectCard } from '../components/common';
@@ -22,7 +23,7 @@ const recentStories = stories
 <Layout title="김진민 - 지속가능한 미래를 코드로 만드는 개발자">
   <!-- Hero Section -->
   <section class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white relative overflow-hidden">
-    <div class="container mx-auto px-4 h-screen flex items-center">
+    <div class="max-w-4xl mx-auto px-4 h-screen flex items-center">
       <!-- 2열 레이아웃: 데스크톱에서 좌우 분할, 모바일에서 상하 배치 -->
       <div class="grid lg:grid-cols-2 gap-8 w-full items-center">
         
@@ -93,8 +94,8 @@ const recentStories = stories
 
   <!-- Quick About Section -->
   <section class="py-20 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto text-center">
+    <Section size="normal">
+      <div class="text-center">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
           기술과 자연의 조화를 추구합니다
         </h2>
@@ -122,12 +123,12 @@ const recentStories = stories
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   </section>
 
   <!-- Projects Section -->
   <section id="projects" class="py-20 bg-gray-50">
-    <div class="container mx-auto px-4">
+    <Section size="normal">
       <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">
         주요 프로젝트
       </h2>
@@ -154,12 +155,12 @@ const recentStories = stories
           </a>
         </div>
       )}
-    </div>
+    </Section>
   </section>
 
   <!-- Stories Section -->
   <section class="py-20 bg-white">
-    <div class="container mx-auto px-4">
+    <Section size="normal">
       <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">
         최신 스토리
       </h2>
@@ -216,30 +217,8 @@ const recentStories = stories
           </a>
         </div>
       )}
-    </div>
+    </Section>
   </section>
-
-  <!-- Contact CTA Section -->
-  <section class="py-20 bg-gradient-to-r from-purple-600 to-blue-600">
-    <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-        함께 성장할 기회를 찾고 계신가요?
-      </h2>
-      <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-        새로운 프로젝트, 협업, 또는 단순히 인사를 나누고 싶으시다면 연락주세요!
-      </p>
-      <a 
-        href="mailto:charmjinmean@gmail.com"
-        class="inline-flex items-center px-8 py-4 bg-white text-purple-600 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-semibold"
-      >
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-        이메일 보내기
-      </a>
-    </div>
-  </section>
-</Layout>
 
 <style>
   @keyframes fadeIn {

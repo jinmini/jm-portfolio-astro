@@ -8,10 +8,10 @@ type Props = {
 
 const { className, size = 'normal' } = Astro.props;
 
-// 크기에 따른 최대 너비 설정
-const maxWidthClass = size === 'narrow' ? 'max-w-3xl' : 'max-w-5xl';
+// 크기에 따른 최대 너비 설정 (1024px 일관성)
+const maxWidthClass = size === 'narrow' ? 'max-w-3xl' : 'max-w-4xl';
 // narrow: max-w-3xl (768px)
-// normal: max-w-5xl (1024px) 
+// normal: max-w-4xl (1024px) 
 ---
 
 <section class={twMerge(
