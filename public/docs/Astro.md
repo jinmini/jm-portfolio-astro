@@ -1625,7 +1625,7 @@ class="group bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-2
 
 ---
 
-*최종 업데이트: 2025.01.30*
+*최종 업데이트: 2025.05.30*
 
 ---
 
