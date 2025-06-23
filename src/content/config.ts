@@ -1,38 +1,30 @@
 import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders';
+
+// 공통 베이스 스키마 (DRY 원칙)
+const baseContentSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  date: z.coerce.date(),
+  tags: z.array(z.string()),
+  thumbnail: z.string().optional(),
+  links: z.object({
+    github: z.string().optional(),
+    site: z.string().optional()
+  }).optional(),
+  featured: z.boolean().default(false),
+});
 
 // Project 컬렉션 (프로젝트)
 const project = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/project' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    thumbnail: z.string(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()),
-    links: z.object({
-      github: z.string().optional(),
-      site: z.string().optional()
-    }).optional(),
-    featured: z.boolean().default(false),
-  }),
+  type: 'content',
+  schema: baseContentSchema,
 });
 
-// Story 컬렉션 (블로그)
+// Story 컬렉션 (블로그) - category enum 추가
 const story = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/story' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    thumbnail: z.string().optional(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()),
-    links: z.object({
-      github: z.string().optional(),
-      site: z.string().optional()
-    }).optional(),
-    featured: z.boolean().default(false),
-    category: z.string(),
+  type: 'content', 
+  schema: baseContentSchema.extend({
+    category: z.enum(['Notion', 'Obsidian', 'n8n', 'FastAPI', 'Next.js']),
   }),
 });
 
