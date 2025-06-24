@@ -3,7 +3,7 @@ import Layout from '../layouts/MainGridLayout.astro';
 import Section from '../components/common/Section.astro';
 import SplineViewer from '../components/SplineViewer.jsx';
 import { getCollection } from 'astro:content';
-import { ProjectCard } from '../components/common';
+import { ProjectCard, Responsive, BlogCard } from '../components/common';
 
 // 최근 프로젝트와 스토리 가져오기
 const projects = await getCollection('project');
@@ -162,44 +162,17 @@ const recentStories = stories
   <section class="py-4 bg-white">
     <Section size="normal">
       <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">
-        최신 스토리
+        최신 블로그
       </h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {recentStories.length > 0 ? (
           recentStories.map((blog) => (
-            <article class="group bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
-              <a href={`/blog/${blog.id}`} class="block">
-                <div class="h-48 bg-gradient-to-br from-green-400 to-blue-500 relative overflow-hidden">
-                  {blog.data.thumbnail ? (
-                    <img 
-                      src={blog.data.thumbnail} 
-                      alt={blog.data.title}
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div class="w-full h-full flex items-center justify-center text-white text-6xl">
-                      📖
-                    </div>
-                  )}
-                </div>
-                <div class="py-4 px-6">
-                  <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                    {blog.data.title}
-                  </h3>
-                  <p class="text-gray-600 mb-4 line-clamp-2">
-                    {blog.data.description}
-                  </p>
-                  <span class="text-sm text-gray-500">
-                    {blog.data.date.toLocaleDateString('ko-KR')}
-                  </span>
-                </div>
-              </a>
-            </article>
+            <BlogCard blog={blog} client:load />
           ))
         ) : (
           <div class="col-span-full text-center py-12">
             <div class="text-6xl mb-4">📝</div>
-            <p class="text-gray-600 text-lg">스토리를 준비 중입니다.</p>
+            <p class="text-gray-600 text-lg">블로그를 준비 중입니다.</p>
             <p class="text-gray-500 mt-2">흥미로운 이야기들을 곧 공유하겠습니다!</p>
           </div>
         )}
@@ -210,7 +183,7 @@ const recentStories = stories
             href="/blog/all/page/1" 
             class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 font-semibold"
           >
-            모든 스토리 보기 →
+            모든 블로그 보기 →
           </a>
         </div>
       )}
