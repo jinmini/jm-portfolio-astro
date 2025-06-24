@@ -24,7 +24,7 @@ const project = defineCollection({
 const blog = defineCollection({
   type: 'content', 
   schema: baseContentSchema.extend({
-    category: z.array(z.enum(['성장', 'Notion', 'Obsidian', 'n8n', 'FastAPI', 'Next.js'])),
+    category: z.string().default("미분류"), // 변경 자유로운 문자열 배열열
   }),
 });
 

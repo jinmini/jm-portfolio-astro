@@ -6,8 +6,8 @@ interface BlogCardProps {
 }
 
 export const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
-  const { title, description, thumbnail, date } = blog.data;
-
+  const { title, description, thumbnail, date, category } = blog.data;
+  
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl">
       <a href={`/blog/${blog.id}`} className="block flex h-full flex-col">
@@ -29,6 +29,22 @@ export const BlogCard: React.FC<BlogCardProps> = ({ blog }) => {
         {/* 카드 내용 */}
         <div className="flex flex-grow flex-col p-6">
           <div className="flex-grow">
+            {/* 카테고리 라벨 */}
+            {category && (
+              <div className="mb-3">
+                <span 
+                  className="inline-block px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = `/blog/${category}/page/1`;
+                  }}
+                >
+                  {category}
+                </span>
+              </div>
+            )}
+            
             <h3 className="mb-2 text-xl font-semibold text-gray-900 transition-colors group-hover:text-blue-600 h-14 line-clamp-2">
               {title}
             </h3>
