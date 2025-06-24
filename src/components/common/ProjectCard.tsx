@@ -41,7 +41,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       </div>
       
       {/* 카드 내용 */}
-      <div className="p-6">
+      <div className="py-4 px-6">
         <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
           {title}
         </h3>

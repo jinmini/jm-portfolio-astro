@@ -16,8 +16,8 @@ const navInfo: NavInfo[] = [
     animation: 'animate-[slideInStagger_0.6s_ease-out_0.1s_forwards]',
   },
   {
-    name: '스토리',
-    path: '/story/all/page/1',
+    name: '블로그',
+    path: '/blog/all/page/1',
     animation: 'animate-[slideInStagger_0.6s_ease-out_0.2s_forwards]',
   },
 ];

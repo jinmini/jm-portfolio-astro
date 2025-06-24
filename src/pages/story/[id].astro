@@ -5,21 +5,21 @@ import Section from '../../components/common/Section.astro';
 import Layout from '../../layouts/MainGridLayout.astro';
 
 export async function getStaticPaths() {
-  const stories = await getCollection('story');
-  const publishedStories = stories.filter(story => !story.data.draft);
-  return publishedStories.map((story) => ({
-    params: { id: story.id },
-    props: { story },
+  const stories = await getCollection('blog');
+  const publishedStories = stories.filter(blog => !blog.data.draft);
+  return publishedStories.map((blog) => ({
+    params: { id: blog.id },
+    props: { blog },
   }));
 }
 
 type Props = {
-  story: CollectionEntry<'story'>;
+  blog: CollectionEntry<'blog'>;
 };
 
-const { story } = Astro.props;
-const { Content } = await story.render();
-const pageTitle = `${story.data.title} - 포트폴리오`;
+const { blog } = Astro.props;
+const { Content } = await blog.render();
+const pageTitle = `${blog.data.title} - 포트폴리오`;
 ---
 
 <Layout title={pageTitle} hasHeaderBackground={true}>
@@ -29,7 +29,7 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
         <!-- 뒤로가기 버튼 -->
         <div class="mb-8">
           <a 
-            href="/story/all/page/1"
+            href="/blog/all/page/1"
             class="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors"
           >
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,10 +45,10 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
             <!-- 썸네일 -->
             <div class="order-2 lg:order-1">
               <div class="relative rounded-2xl overflow-hidden shadow-lg">
-                {story.data.thumbnail ? (
+                {blog.data.thumbnail ? (
                   <img 
-                    src={story.data.thumbnail} 
-                    alt={story.data.title}
+                    src={blog.data.thumbnail} 
+                    alt={blog.data.title}
                     class="w-full h-64 lg:h-80 object-cover"
                   />
                 ) : (
@@ -57,7 +57,7 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
                   </div>
                 )}
                 <span class="absolute top-4 left-4 bg-white/90 text-gray-900 px-3 py-2 rounded-full text-sm font-semibold">
-                  {story.data.category}
+                  {blog.data.category}
                 </span>
               </div>
             </div>
@@ -65,10 +65,10 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
             <!-- 스토리 정보 -->
             <div class="order-1 lg:order-2">
               <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                {story.data.title}
+                {blog.data.title}
               </h1>
               <p class="text-xl text-gray-600 mb-6">
-                {story.data.description}
+                {blog.data.description}
               </p>
 
               <!-- 메타 정보 -->
@@ -76,11 +76,11 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <span class="text-sm font-medium text-gray-500">게시일</span>
-                    <p class="text-gray-900">{story.data.date.toLocaleDateString('ko-KR')}</p>
+                    <p class="text-gray-900">{blog.data.date.toLocaleDateString('ko-KR')}</p>
                   </div>
                   <div>
                     <span class="text-sm font-medium text-gray-500">카테고리</span>
-                    <p class="text-gray-900">{story.data.category}</p>
+                    <p class="text-gray-900">{blog.data.category}</p>
                   </div>
                 </div>
                 
@@ -88,7 +88,7 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
                 <div>
                   <span class="text-sm font-medium text-gray-500 block mb-2">태그</span>
                   <div class="flex flex-wrap gap-2">
-                    {story.data.tags.map((tag) => (
+                    {blog.data.tags.map((tag) => (
                       <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium">
                         {tag}
                       </span>
@@ -100,7 +100,7 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
               <!-- 소셜 공유 버튼들 -->
               <div class="flex flex-wrap gap-4">
                 <button 
-                  onclick={`navigator.share && navigator.share({title: '${story.data.title}', url: window.location.href})`}
+                  onclick={`navigator.share && navigator.share({title: '${blog.data.title}', url: window.location.href})`}
                   class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,13 +110,13 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
                 </button>
                 
                 <a 
-                  href={`/story/${story.data.category}/page/1`}
+                  href={`/blog/${blog.data.category}/page/1`}
                   class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                   </svg>
-                  {story.data.category} 더보기
+                  {blog.data.category} 더보기
                 </a>
               </div>
             </div>
@@ -134,16 +134,16 @@ const pageTitle = `${story.data.title} - 포트폴리오`;
             <h2 class="text-2xl font-bold text-gray-900 mb-4">더 많은 스토리 보기</h2>
             <div class="flex flex-wrap justify-center gap-4">
               <a 
-                href="/story/all/page/1"
+                href="/blog/all/page/1"
                 class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 전체 스토리
               </a>
               <a 
-                href={`/story/${story.data.category}/page/1`}
+                href={`/blog/${blog.data.category}/page/1`}
                 class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                {story.data.category} 카테고리
+                {blog.data.category} 카테고리
               </a>
             </div>
           </div>

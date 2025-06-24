@@ -288,3 +288,5 @@ project와 story 컬렉션에 들어갈 실제 내 콘텐츠 최소 3~5개를 �
 
 ## 16:50 ~ 18:00
 - CTA Section 제거하고! Footer 디자인 수정!
+- pretendard font 적용!
+

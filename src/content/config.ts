@@ -21,11 +21,11 @@ const project = defineCollection({
 });
 
 // Story 컬렉션 (블로그) - category enum 추가
-const story = defineCollection({
+const blog = defineCollection({
   type: 'content', 
   schema: baseContentSchema.extend({
     category: z.array(z.enum(['성장', 'Notion', 'Obsidian', 'n8n', 'FastAPI', 'Next.js'])),
   }),
 });
 
-export const collections = { project, story }; 
+export const collections = { project, blog }; 
