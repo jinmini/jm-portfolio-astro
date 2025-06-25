@@ -2,6 +2,9 @@
 
 ## To do list
 1. 개인 포트폴리오 Projcet, Story 하나씩 완성해보기! 
+  a. 공통 컴포넌트 시스템 강화 (Button, Card 통일)
+  b. 실제 콘텐츠 채우기 (프로젝트/스토리 3-5개 작성)
+  c. 레이아웃 일관성 개선 (Section 적용 확대)
 
 
 ### 09:30 ~ 10:30
@@ -195,3 +198,95 @@ project와 story 컬렉션에 들어갈 실제 내 콘텐츠 최소 3~5개를 �
 - CTA 배치 전략 일관성 확보
 
 **다음 단계**: 공통 컴포넌트 시스템 구축 및 레이아웃 일관성 강화 작업 진행
+
+### 12:50 ~ 13:20 
+
+- 레이아웃 일관성 강화 작업
+## 🎯 **레이아웃 일관성 개선 - 구현 계획 수립**
+
+### 📋 **단계별 작업 계획 (중요도 & 난이도 기준)**
+
+#### **1단계: Section 컴포넌트 강화** ⭐⭐⭐ (높은 중요도, 낮은 난이도)
+```typescript
+// Section.astro 개선
+- size prop 추가: 'narrow' | 'normal' 
+- 반응형 padding 통합: px-4 md:px-6 lg:px-8
+- 최대 너비 제어: narrow(800px), normal(1024px)
+- 중앙 정렬: mx-auto 기본 적용
+```
+
+#### **2단계: Layout.astro 헤더/푸터 일관성** ⭐⭐⭐ (높은 중요도, 낮은 난이도)
+```typescript
+// Layout.astro 개선
+- 헤더/푸터에 mx-auto max-w-7xl px-4 명시
+- main에 pt-16 기본 적용 (조건부 로직 단순화)
+- hasHeaderBackground 로직 유지하되 단순화
+```
+
+#### **3단계: 기존 페이지 Section 적용** ⭐⭐ (중간 중요도, 낮은 난이도)
+```typescript
+// 페이지별 적용
+- index.astro: Section size="normal" 
+- about.astro: Section size="narrow"
+- project/[id].astro: Section size="narrow" (MDX용)
+- 기존 container 클래스 제거
+```
+
+#### **4단계: MDX Three-Column Layout 대비** ⭐ (낮은 중요도, 높은 난이도)
+```typescript
+// 향후 TOC 구현을 위한 구조 준비
+- MDX 페이지용 특별 레이아웃 고려
+- 800px 메인 + 216px TOC 공간 확보
+- 현재는 narrow로 처리, 추후 확장 가능하게
+```
+
+---
+
+### 🚀 **1단계부터 시작할까요?**
+
+**Section.astro 컴포넌트 강화**가 가장 중요하고 쉬운 작업입니다.
+- ✅ 다른 모든 작업의 기반이 됨
+- ✅ 복잡하지 않아 실수 위험 낮음  
+- ✅ 즉시 효과를 볼 수 있음
+
+## 14:20 ~ 15:20
+- 기번 Layout.astro를 MainGridLayout으로 분리 => 관심사의 분리
+- BaseLayout.astro(기존 - Layout.astro) : `<html>, <head>, <body>, SEO 관련 메타 태그, 폰트 로딩` 등 보이지 않는 설정 책임. 한번 설정하면 거의 수정할 일이 없음!
+```
+// 순수한 문서 구조만 담당
+- HTML5 기본 구조 (DOCTYPE, head, body)
+- 메타 태그, SEO 설정
+- 글로벌 스타일 로딩
+- 타이틀, 설명 등 문서 메타데이터
+- 기본적인 body 태그만 (시각적 요소 없음)
+```
+
+- MainGridLayout.astro : 콘텐츠를 어떻게 보여줄 것인가에 집중! 헤더, 푸터, 사이드바(TOC), 메인 콘텐츠 영역 등 눈에 보이는 컴포넌트들의 시각적 배치를 담당! 프로젝트의 디자인이 변경되면 이 파일을 주로 수정하게 됨!
+```
+- BaseLayout 상속
+- 헤더/네비게이션 시스템
+- 푸터
+- 그리드 시스템
+- 반응형 레이아웃
+- 시각적 스타일링
+```
+
+- 다른 레이아웃의 페이지가 필요해지면 헤더와 푸터가 없는 랜딩 페이지나, 관리자 대시보드 처럼.
+하나의 `Layout.astro`에 넣었다면, 복잡한 조건문(if/else)으로 가득 참.
+
+- 오류 발생! 
+- `<slot name="meta" slot="meta" />` 라는 문법은 Astro 파서에 혼동
+
+- 수정된 내용
+- `import { Fragment } from 'astro/components';` 를 추가하여 Astro의 내장 컴포넌트인 Fragment를 가져오기
+```
+<Fragment slot="meta">
+    <slot name="meta" />
+</Fragment>
+```
+프론트매터 문제 였다. 아직 커서에는 astro를 완전히 인식하고 있지 않은 듯하다! 
+
+## 16:50 ~ 18:00
+- CTA Section 제거하고! Footer 디자인 수정!
+- pretendard font 적용!
+

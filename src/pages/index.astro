@@ -1,12 +1,14 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from '../layouts/MainGridLayout.astro';
+import Section from '../components/common/Section.astro';
 import SplineViewer from '../components/SplineViewer.jsx';
 import { getCollection } from 'astro:content';
-import { ProjectCard } from '../components/common';
+import { ProjectCard, Responsive, BlogCard } from '../components/common';
+import HeroProfileCard from '../components/hero/HeroProfileCard.astro';
 
 // 최근 프로젝트와 스토리 가져오기
 const projects = await getCollection('project');
-const stories = await getCollection('story');
+const stories = await getCollection('blog');
 
 const featuredProjects = projects
   .filter(p => p.data.featured)
@@ -14,21 +16,21 @@ const featuredProjects = projects
   .slice(0, 3);
 
 const recentStories = stories
-  .filter(story => !story.data.draft)
+  .filter(blog => !blog.data.draft)
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
   .slice(0, 3);
 ---
 
-<Layout title="김진민 - 지속가능한 미래를 코드로 만드는 개발자">
+<Layout title="김진민 - 지속가능한 미래를 설계합니다">
   <!-- Hero Section -->
-  <section class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white relative overflow-hidden">
-    <div class="container mx-auto px-4 h-screen flex items-center">
+  <section class="pt-16 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white dark:from-slate-900 dark:via-gray-900 dark:to-black relative overflow-hidden flex flex-col">
+    <div class="w-full max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 flex-grow flex items-center">
       <!-- 2열 레이아웃: 데스크톱에서 좌우 분할, 모바일에서 상하 배치 -->
-      <div class="grid lg:grid-cols-2 gap-8 w-full items-center">
+      <div class="grid lg:grid-cols-[3fr_2fr] gap-8 w-full items-center">
         
         <!-- 왼쪽: 3D 모델 영역 -->
-        <div class="order-1 lg:order-1 relative animate-slide-in-left">
-          <div class="relative z-0 h-96 lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl spline-container border border-white/20">
+        <div class="order-2 lg:order-1 relative animate-slide-in-left">
+          <div class="relative z-0 aspect-[4/5] w-full max-w-md mx-auto lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl spline-container border border-white/20 spline-scale-container">
             <SplineViewer
               client:load
               url="https://prod.spline.design/hblmvsuZDlgmNL41/scene.splinecode"
@@ -42,41 +44,11 @@ const recentStories = stories
           <!-- 3D 모델 장식 요소 -->
           <div class="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-80 animate-pulse shadow-lg"></div>
           <div class="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full opacity-60 animate-bounce shadow-lg"></div>
-          <div class="absolute top-1/2 -left-2 w-4 h-4 bg-gradient-to-r from-pink-400 to-red-500 rounded-full opacity-70 animate-ping"></div>
         </div>
 
-        <!-- 오른쪽: 텍스트 영역 -->
-        <div class="order-2 lg:order-2 text-center lg:text-left space-y-6 animate-slide-in-right">
-          <!-- 배경 오버레이 (가독성 향상) -->
-          <div class="relative z-10 glass-effect rounded-3xl p-8 lg:p-12">
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 animate-fade-in">
-              안녕하세요! 👋
-            </h1>
-            <p class="text-lg md:text-xl lg:text-2xl text-gray-700 mb-4 leading-relaxed animate-fade-in" style="animation-delay: 0.3s; animation-fill-mode: both;">
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-bold">
-                지속가능한 미래
-              </span>를 코드로 만들어가는
-            </p>
-            <p class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-8 animate-fade-in" style="animation-delay: 0.6s; animation-fill-mode: both;">
-              김진민입니다
-            </p>
-
-            <!-- 버튼들 -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in" style="animation-delay: 0.9s; animation-fill-mode: both;">
-              <a 
-                href="/about" 
-                class="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
-              >
-                더 알아보기
-              </a>
-              <a 
-                href="#projects" 
-                class="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all duration-300 transform hover:scale-105 font-semibold"
-              >
-                프로젝트 보기
-              </a>
-            </div>
-          </div>
+        <!-- 오른쪽: 프로필 카드 영역 -->
+        <div class="order-1 lg:order-2 animate-slide-in-right flex items-center justify-center">
+          <HeroProfileCard />
         </div>
       </div>
       
@@ -92,43 +64,43 @@ const recentStories = stories
   </section>
 
   <!-- Quick About Section -->
-  <section class="py-20 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
-          기술과 자연의 조화를 추구합니다
+  <section class="py-4 bg-white dark:bg-gray-800">
+    <Section size="normal">
+      <div class="text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
+          온실가스 관리 경력과 워크플로우 자동화를 추구합니다
         </h2>
         <div class="grid md:grid-cols-3 gap-8">
           <div class="text-center">
             <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-400 to-blue-500 rounded-xl flex items-center justify-center text-white text-2xl">
               🌱
             </div>
-            <h3 class="text-xl font-semibold mb-2">ESG & 탄소중립</h3>
-            <p class="text-gray-600">지속가능한 미래를 위한 기술 솔루션 개발</p>
+            <h3 class="text-xl font-semibold mb-2 dark:text-gray-100">ESG & 탄소중립</h3>
+            <p class="text-gray-600 dark:text-gray-400">지속가능한 미래를 위한 기술 솔루션 개발</p>
           </div>
           <div class="text-center">
             <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center text-white text-2xl">
               🚀
             </div>
-            <h3 class="text-xl font-semibold mb-2">Full-stack 개발</h3>
-            <p class="text-gray-600">React, Python, AI를 활용한 혁신적인 솔루션</p>
+            <h3 class="text-xl font-semibold mb-2 dark:text-gray-100">Full-stack 개발</h3>
+            <p class="text-gray-600 dark:text-gray-400">React, Python, AI를 활용한 혁신적인 솔루션</p>
           </div>
           <div class="text-center">
             <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-white text-2xl">
               💡
             </div>
-            <h3 class="text-xl font-semibold mb-2">자동화 & 최적화</h3>
-            <p class="text-gray-600">효율적인 프로세스를 통한 가치 창출</p>
+            <h3 class="text-xl font-semibold mb-2 dark:text-gray-100">자동화 & 최적화</h3>
+            <p class="text-gray-600 dark:text-gray-400">효율적인 프로세스를 통한 가치 창출</p>
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   </section>
 
   <!-- Projects Section -->
-  <section id="projects" class="py-20 bg-gray-50">
-    <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">
+  <section id="projects" class="py-4 bg-gray-50 dark:bg-black">
+    <Section size="normal">
+      <h2 class="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
         주요 프로젝트
       </h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -139,8 +111,8 @@ const recentStories = stories
         ) : (
           <div class="col-span-full text-center py-12">
             <div class="text-6xl mb-4">🚀</div>
-            <p class="text-gray-600 text-lg">프로젝트를 준비 중입니다.</p>
-            <p class="text-gray-500 mt-2">곧 멋진 프로젝트들을 공유하겠습니다!</p>
+            <p class="text-gray-600 dark:text-gray-300 text-lg">프로젝트를 준비 중입니다.</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">곧 멋진 프로젝트들을 공유하겠습니다!</p>
           </div>
         )}
       </div>
@@ -148,98 +120,46 @@ const recentStories = stories
         <div class="text-center mt-12">
           <a 
             href="/project/page/1" 
-            class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 font-semibold"
+            class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
           >
             모든 프로젝트 보기 →
           </a>
         </div>
       )}
-    </div>
+    </Section>
   </section>
 
   <!-- Stories Section -->
-  <section class="py-20 bg-white">
-    <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">
-        최신 스토리
+  <section class="py-4 bg-white dark:bg-gray-800">
+    <Section size="normal">
+      <h2 class="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
+        최신 블로그
       </h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {recentStories.length > 0 ? (
-          recentStories.map((story) => (
-            <article class="group bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
-              <a href={`/story/${story.id}`} class="block">
-                <div class="h-48 bg-gradient-to-br from-green-400 to-blue-500 relative overflow-hidden">
-                  {story.data.thumbnail ? (
-                    <img 
-                      src={story.data.thumbnail} 
-                      alt={story.data.title}
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div class="w-full h-full flex items-center justify-center text-white text-6xl">
-                      📖
-                    </div>
-                  )}
-                  <span class="absolute top-3 left-3 bg-white/90 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold">
-                    {story.data.category}
-                  </span>
-                </div>
-                <div class="p-6">
-                  <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                    {story.data.title}
-                  </h3>
-                  <p class="text-gray-600 mb-4 line-clamp-2">
-                    {story.data.description}
-                  </p>
-                  <span class="text-sm text-gray-500">
-                    {story.data.date.toLocaleDateString('ko-KR')}
-                  </span>
-                </div>
-              </a>
-            </article>
+          recentStories.map((blog) => (
+            <BlogCard blog={blog} client:load />
           ))
         ) : (
           <div class="col-span-full text-center py-12">
             <div class="text-6xl mb-4">📝</div>
-            <p class="text-gray-600 text-lg">스토리를 준비 중입니다.</p>
-            <p class="text-gray-500 mt-2">흥미로운 이야기들을 곧 공유하겠습니다!</p>
+            <p class="text-gray-600 dark:text-gray-300 text-lg">블로그를 준비 중입니다.</p>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">흥미로운 이야기들을 곧 공유하겠습니다!</p>
           </div>
         )}
       </div>
       {recentStories.length > 0 && (
         <div class="text-center mt-12">
           <a 
-            href="/story/all/page/1" 
-            class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 font-semibold"
+            href="/blog/all/page/1" 
+            class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
           >
-            모든 스토리 보기 →
+            모든 블로그 보기 →
           </a>
         </div>
       )}
-    </div>
+    </Section>
   </section>
-
-  <!-- Contact CTA Section -->
-  <section class="py-20 bg-gradient-to-r from-purple-600 to-blue-600">
-    <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-        함께 성장할 기회를 찾고 계신가요?
-      </h2>
-      <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-        새로운 프로젝트, 협업, 또는 단순히 인사를 나누고 싶으시다면 연락주세요!
-      </p>
-      <a 
-        href="mailto:charmjinmean@gmail.com"
-        class="inline-flex items-center px-8 py-4 bg-white text-purple-600 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-semibold"
-      >
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-        이메일 보내기
-      </a>
-    </div>
-  </section>
-</Layout>
 
 <style>
   @keyframes fadeIn {
@@ -307,5 +227,40 @@ const recentStories = stories
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* 3D 모델 스케일 조정 - 여러 방법 동시 적용 */
+  .spline-scaled {
+    transform: scale(0.75) !important;
+    transform-origin: center !important;
+  }
+  
+  .spline-scale-container * {
+    transform: scale(0.75) !important;
+    transform-origin: center !important;
+  }
+  
+  .spline-scale-container canvas,
+  .spline-scale-container iframe,
+  [data-spline] {
+    transform: scale(0.75) !important;
+    transform-origin: center !important;
+  }
+  
+  /* 모바일에서 더 작게 */
+  @media (max-width: 768px) {
+    .spline-scaled {
+      transform: scale(0.6) !important;
+    }
+    
+    .spline-scale-container * {
+      transform: scale(0.6) !important;
+    }
+    
+    .spline-scale-container canvas,
+    .spline-scale-container iframe,
+    [data-spline] {
+      transform: scale(0.6) !important;
+    }
   }
 </style>
