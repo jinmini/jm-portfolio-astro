@@ -22,14 +22,14 @@ const recentStories = stories
 
 <Layout title="김진민 - 지속가능한 미래를 코드로 만드는 개발자">
   <!-- Hero Section -->
-  <section class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white relative overflow-hidden">
-    <div class="max-w-4xl mx-auto px-4 h-screen flex items-center">
+  <section class="pt-16 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white relative overflow-hidden flex flex-col">
+    <div class="w-full max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 flex-grow flex items-center">
       <!-- 2열 레이아웃: 데스크톱에서 좌우 분할, 모바일에서 상하 배치 -->
-      <div class="grid lg:grid-cols-2 gap-8 w-full items-center">
+      <div class="grid lg:grid-cols-[3fr_2fr] gap-8 w-full items-center">
         
         <!-- 왼쪽: 3D 모델 영역 -->
-        <div class="order-1 lg:order-1 relative animate-slide-in-left">
-          <div class="relative z-0 h-96 lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl spline-container border border-white/20">
+        <div class="order-2 lg:order-1 relative animate-slide-in-left">
+          <div class="relative z-0 aspect-[4/5] w-full max-w-md mx-auto lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl spline-container border border-white/20 spline-scale-container">
             <SplineViewer
               client:load
               url="https://prod.spline.design/hblmvsuZDlgmNL41/scene.splinecode"
@@ -43,11 +43,10 @@ const recentStories = stories
           <!-- 3D 모델 장식 요소 -->
           <div class="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-80 animate-pulse shadow-lg"></div>
           <div class="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full opacity-60 animate-bounce shadow-lg"></div>
-          <div class="absolute top-1/2 -left-2 w-4 h-4 bg-gradient-to-r from-pink-400 to-red-500 rounded-full opacity-70 animate-ping"></div>
         </div>
 
         <!-- 오른쪽: 텍스트 영역 -->
-        <div class="order-2 lg:order-2 text-center lg:text-left space-y-6 animate-slide-in-right">
+        <div class="order-1 lg:order-2 text-center lg:text-left space-y-6 animate-slide-in-right">
           <!-- 배경 오버레이 (가독성 향상) -->
           <div class="relative z-10 glass-effect rounded-3xl p-8 lg:p-12">
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 animate-fade-in">
@@ -256,5 +255,40 @@ const recentStories = stories
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* 3D 모델 스케일 조정 - 여러 방법 동시 적용 */
+  .spline-scaled {
+    transform: scale(0.75) !important;
+    transform-origin: center !important;
+  }
+  
+  .spline-scale-container * {
+    transform: scale(0.75) !important;
+    transform-origin: center !important;
+  }
+  
+  .spline-scale-container canvas,
+  .spline-scale-container iframe,
+  [data-spline] {
+    transform: scale(0.75) !important;
+    transform-origin: center !important;
+  }
+  
+  /* 모바일에서 더 작게 */
+  @media (max-width: 768px) {
+    .spline-scaled {
+      transform: scale(0.6) !important;
+    }
+    
+    .spline-scale-container * {
+      transform: scale(0.6) !important;
+    }
+    
+    .spline-scale-container canvas,
+    .spline-scale-container iframe,
+    [data-spline] {
+      transform: scale(0.6) !important;
+    }
   }
 </style>

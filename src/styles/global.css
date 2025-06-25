@@ -234,3 +234,16 @@
     --color-text: #f8fafc;
   }
 }
+
+/* Hero Section 3D 모델 스케일 조정 */
+.spline-scale-container canvas {
+  transform: scale(0.8) !important;
+  transform-origin: center;
+}
+
+/* 모바일에서 3D 모델 더 작게 */
+@media (max-width: 768px) {
+  .spline-scale-container canvas {
+    transform: scale(0.7) !important;
+  }
+}
