@@ -17,6 +17,9 @@ importers:
       '@astrojs/tailwind':
         specifier: ^6.0.2
         version: 6.0.2(astro@5.10.0(@types/node@24.0.3)(jiti@1.21.7)(rollup@4.44.0)(sass-embedded@1.89.2)(typescript@5.8.3)(yaml@2.8.0))(tailwindcss@3.4.17)
+      '@heroicons/react':
+        specifier: ^2.2.0
+        version: 2.2.0(react@18.3.1)
       '@splinetool/react-spline':
         specifier: ^4.0.0
         version: 4.0.0(@splinetool/runtime@1.10.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -337,6 +340,11 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@heroicons/react@2.2.0':
+    resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
+    peerDependencies:
+      react: '>= 16 || ^19.0.0-rc'
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -2659,6 +2667,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.5':
     optional: true
+
+  '@heroicons/react@2.2.0(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:

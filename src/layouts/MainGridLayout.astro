@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import { MobileMenuButton } from '../components/common/Header/MobileMenuButton.tsx';
 import { twMerge } from 'tailwind-merge';
+import ThemeToggleButton from '../components/common/Header/ThemeToggleButton.tsx';
 
 
 export interface Props {
@@ -42,24 +43,30 @@ const brandingMessage = {
 	
 	<header class={twMerge(
 		'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-		hasHeaderBackground ? 'bg-white/90 backdrop-blur-sm border-b border-gray-200' : 'bg-transparent'
+		hasHeaderBackground ? 'bg-white/90 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700' : 'bg-transparent'
 	)}>
 		<nav class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-			<a href="/" class="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
+			<a href="/" class="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
 				Jinmin
 			</a>
 			
 			<!-- 데스크톱 네비게이션 - Fuwari 스타일 -->
 			<ul class="hidden lg:flex space-x-8">
-				<li><a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Home</a></li>
-				<li><a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">About</a></li>
-				<li><a href="/project/page/1" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Projects</a></li>
-				<li><a href="/blog/all/page/1" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Blogs</a></li>
-				<li><a href="https://github.com/username" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">GitHub</a></li>
+				<li><a href="/" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Home</a></li>
+				<li><a href="/about" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">About</a></li>
+				<li><a href="/project/page/1" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Projects</a></li>
+				<li><a href="/blog/all/page/1" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Blogs</a></li>
 			</ul>
 			
-			<!-- 모바일 햄버거 메뉴 -->
-			<MobileMenuButton client:load />
+			<div class="flex items-center gap-4">
+				<!-- 테마 토글 버튼 -->
+				<ThemeToggleButton client:load />
+
+				<!-- 모바일 햄버거 메뉴 -->
+				<div class="lg:hidden">
+					<MobileMenuButton client:load />
+				</div>
+			</div>
 		</nav>
 	</header>
 	

@@ -22,4 +22,21 @@ const navInfo: NavInfo[] = [
   },
 ];
 
-export default navInfo; 
+export default navInfo;
+
+export const NAV_INFO = {
+  NAV_LINKS: [
+    {
+      name: 'About',
+      path: '/about',
+    },
+    {
+      name: 'Project',
+      path: '/project/page/1',
+    },
+    {
+      name: 'Blog',
+      path: '/blog/all/page/1',
+    },
+  ],
+}; 
