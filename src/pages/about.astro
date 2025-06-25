@@ -1,75 +1,38 @@
 ---
-import AboutMarkdownRenderer from '../components/about/AboutMarkdownRenderer.astro';
-import AboutMe from '../components/about/AboutMe.astro';
-import { Responsive } from '../components/common';
-import Section from '../components/common/Section.astro';
-import Layout from '../layouts/MainGridLayout.astro';
-import ESGTimeline from '../components/esg/ESGTimeline.tsx';
+import { getCollection } from 'astro:content';
+import MainGridLayout from '@layouts/MainGridLayout.astro';
+import AboutMe from '@components/about/AboutMe.astro';
+import ESGTimeline from '@components/esg/ESGTimeline.tsx';
+import Section from '@components/common/Section.astro';
+import AboutMarkdownRenderer from '@components/about/AboutMarkdownRenderer.astro';
 
-const pageTitle = `소개 - 포트폴리오`;
+const esgEntries = await getCollection('esg');
+
+const timelineData = esgEntries.map(item => ({
+  id: item.slug,
+  description: item.body,
+  ...item.data,
+}));
+
+// 데이터를 원하는 순서(연도 내림차순)로 정렬
+timelineData.sort((a, b) => {
+  if (a.year !== b.year) {
+    return b.year.localeCompare(a.year);
+  }
+  return a.id.localeCompare(b.id);
+});
+
+const pageTitle = "About | Jin mini";
+const pageDescription = "ESG AI 전문가이자 풀스택 개발자, 김진의 소개 페이지입니다. 환경, 사회, 지배구조(ESG) 영역에서의 전문성과 AI 기술을 결합하여 지속가능한 솔루션을 만듭니다.";
 ---
 
-<Layout title={pageTitle} hasHeaderBackground={true}>
-  <Section size="narrow">
-    <Responsive client:load>
-      <AboutMarkdownRenderer>
-        <h1>About Me</h1>
-
-        <AboutMe />
-
-        <h1>💼 Work Experience</h1>
-
-        <h2>🏢 이전 직장</h2>
-        <table>
-          <tbody>
-            <tr><td><strong>period</strong></td><td>2024.06 ~ 2025.12 </td></tr>
-            <tr><td><strong>position</strong></td><td>온실가스 컨설턴트</td></tr>
-            <tr><td><strong>company</strong></td><td>에코 네트워크</td></tr>
-            <tr><td><strong>projects</strong></td><td>K-ETS / CBAM / LCI DB 구축 </td></tr>
-            <tr><td><strong>tech</strong></td><td>MS Office / 한글 / Gabi </td></tr>
-          </tbody>
-        </table>
-
-        <h3>주요 성과</h3>
-        <ul>
-          <li>웹사이트 로딩 속도 40% 개선 (Lighthouse 성능 점수 90+ 달성)</li>
-          <li>모바일 반응형 UI/UX 개선으로 사용자 만족도 25% 향상</li>
-          <li>마이크로서비스 아키텍처 도입으로 배포 효율성 50% 증대</li>
-        </ul>
-
-        <ESGTimeline client:visible />
-
-        <h1>🤝 Communities</h1>
-
-        <h2>🎯 커뮤니티 활동</h2>
-        
-        <h3>🔥 GPters (2025.05~06)</h3>
-        <ul>
-          <li>바이브 디버깅 베스트 사례 선정</li>
-          <li>온라인 스터디 그룹 멘토링 (20+ 참가자)</li>
-        </ul>
-
-        <h2>🎓 멘토링 & 교육</h2>
-
-        <h3>👨‍🏫 삼정 KPMG 보고서 자동화 과정</h3>
-        <ul>
-          <li>ESG 보고서 자동화 팀 프로젝트</li>
-          <li>Full-stack기반 교육</li>
-        </ul>
-
-        <h2>🏆 수상 경력</h2>
-
-        <h3>🥇 2023 Developer Conference 해커톤 1위</h3>
-        <ul>
-          <li>주제: "접근성을 고려한 웹 애플리케이션"</li>
-          <li>24시간 내 React + AI 기반 접근성 도구 개발</li>
-          <li>스크린 리더 최적화 및 키보드 네비게이션 구현</li>
-        </ul>
-
-        <h3>🥈 2022 오픈소스 컨트리뷰션 아카데미 우수상</h3>
-        <ul>
-          <li>Next.js 한국어 문서화 프로젝트 참여</li>
-          <li>100+ 페이지 번역 및 검수 완료</li>
-        </ul>
+<MainGridLayout title={pageTitle} description={pageDescription}>
+  <Section>
+    <AboutMe />
+    <AboutMarkdownRenderer>
+      <ESGTimeline client:load data={timelineData} />
+    </AboutMarkdownRenderer>
+  </Section>
+</MainGridLayout>
 
 
