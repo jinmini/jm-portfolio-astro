@@ -13,6 +13,8 @@ export default defineConfig({
     tailwind()
   ],
 
+  output: 'static',
+
   server: {
     port: 4322,
     host: true
