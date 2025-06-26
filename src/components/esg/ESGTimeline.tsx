@@ -102,7 +102,7 @@ const ESGTimeline: React.FC<ESGTimelineProps> = ({ items: allItems }) => {
   }, [allItems]);
 
   return (
-    <section className="w-full">
+    <section className="w-full mx-auto">
       {/* 타이틀 섹션 */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center justify-center gap-3">
@@ -123,18 +123,20 @@ const ESGTimeline: React.FC<ESGTimelineProps> = ({ items: allItems }) => {
           ))}
         </div>
       ) : (
-        <div className="relative">
-          <div className="absolute left-[66px] top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
-          {filteredTimelineItems.map((item, index) => (
-            <TimelineCard
-              key={item.id}
-              item={item}
-              isExpanded={expandedItems.has(item.id)}
-              onToggleExpand={() => toggleExpanded(item.id)}
-              index={index}
-              getCategoryIcon={getCategoryIcon}
-            />
-          ))}
+        <div className="w-full flex justify-center">
+          <div className="relative">
+            <div className="absolute left-[66px] top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+            {filteredTimelineItems.map((item, index) => (
+              <TimelineCard
+                key={item.id}
+                item={item}
+                isExpanded={expandedItems.has(item.id)}
+                onToggleExpand={() => toggleExpanded(item.id)}
+                index={index}
+                getCategoryIcon={getCategoryIcon}
+              />
+            ))}
+          </div>
         </div>
       )}
     </section>
