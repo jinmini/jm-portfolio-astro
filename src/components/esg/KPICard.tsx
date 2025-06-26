@@ -11,9 +11,10 @@ type KPICardProps = {
     thumbnail?: string;
     slug: string;
   };
+  onClick?: () => void;
 };
 
-const KPICard: React.FC<KPICardProps> = ({ item }) => {
+const KPICard: React.FC<KPICardProps> = ({ item, onClick }) => {
   const { title, category, impact, emphasis, thumbnail, slug } = item;
 
   const categoryStyles = {
@@ -27,6 +28,13 @@ const KPICard: React.FC<KPICardProps> = ({ item }) => {
     if (category === 'S') return '👥';
     if (category === 'G') return '🏛️';
     return '';
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
   };
 
   let cardSizeClass = '';
@@ -47,6 +55,7 @@ const KPICard: React.FC<KPICardProps> = ({ item }) => {
   return (
     <a 
       href={anchorId} 
+      onClick={handleClick}
       className={`relative block group w-full h-full rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 ${cardSizeClass}`}
     >
       <div 

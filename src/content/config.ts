@@ -37,7 +37,7 @@ const esgCollection = defineCollection({
     category: z.enum(['E', 'S', 'G']),
     isHighlight: z.boolean().optional(),
     impact: z.string().optional(),
-    thumbnail: z.string().url().optional(),
+    thumbnail: z.string().optional(),
     role: z.string().optional(),
     techStack: z.array(z.string()).optional(),
     achievements: z.array(z.string()).optional(),

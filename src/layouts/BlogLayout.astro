@@ -1,0 +1,110 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, date, category, thumbnail } = Astro.props;
+---
+<header class="mb-12">
+  <!-- 타이틀 -->
+  <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+    {title}
+  </h1>
+
+  <!-- 메타 정보 (날짜와 카테고리) -->
+  <div class="flex flex-wrap items-center gap-6 mb-8">
+    <div class="flex items-center text-gray-600">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+      {date.toLocaleDateString('ko-KR')}
+    </div>
+    <div class="flex items-center">
+      <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium">
+        {category}
+      </span>
+    </div>
+  </div>
+
+  <!-- 썸네일 이미지 -->
+  {thumbnail && (
+    <div class="relative rounded-2xl overflow-hidden shadow-lg">
+      <img 
+        src={thumbnail} 
+        alt={title}
+        class="w-full h-auto object-cover"
+      />
+    </div>
+  )}
+</header>
+
+<!-- 스토리 상세 내용 -->
+<article class="prose prose-lg max-w-none">
+  <slot />
+</article>
+
+<style>
+  .prose {
+    color: #374151;
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    color: #111827;
+    font-weight: 700;
+  }
+  .prose h1 {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+  .prose h2 {
+    font-size: 1.875rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+  .prose h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .prose p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+  }
+  .prose ul, .prose ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+  .prose strong {
+    font-weight: 600;
+    color: #111827;
+  }
+  .prose code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+  .prose blockquote {
+    border-left: 4px solid #d1d5db;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #6b7280;
+  }
+  .prose pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .prose pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+</style> 
