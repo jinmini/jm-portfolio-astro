@@ -2,36 +2,45 @@
 import { getCollection } from 'astro:content';
 import MainGridLayout from '@layouts/MainGridLayout.astro';
 import AboutMe from '@components/about/AboutMe.astro';
+import HeroProfileCard from '@components/hero/HeroProfileCard.astro';
 import ESGTimeline from '@components/esg/ESGTimeline.tsx';
 import Section from '@components/common/Section.astro';
 import AboutMarkdownRenderer from '@components/about/AboutMarkdownRenderer.astro';
 
 const esgEntries = await getCollection('esg');
 
-const timelineData = esgEntries.map(item => ({
-  id: item.slug,
-  description: item.body,
-  ...item.data,
+// ESGTimeline 컴포넌트에 전달할 수 있도록 데이터 가공
+const items = esgEntries.map(entry => ({
+  id: entry.id,
+  slug: entry.slug,
+  body: entry.body, // Markdown 본문을 HTML로 변환한 값
+  data: entry.data,
 }));
 
-// 데이터를 원하는 순서(연도 내림차순)로 정렬
-timelineData.sort((a, b) => {
-  if (a.year !== b.year) {
-    return b.year.localeCompare(a.year);
-  }
-  return a.id.localeCompare(b.id);
-});
-
-const pageTitle = "About | Jin mini";
+const pageTitle = "About | Jinmini";
 const pageDescription = "ESG AI 전문가이자 풀스택 개발자, 김진의 소개 페이지입니다. 환경, 사회, 지배구조(ESG) 영역에서의 전문성과 AI 기술을 결합하여 지속가능한 솔루션을 만듭니다.";
 ---
 
 <MainGridLayout title={pageTitle} description={pageDescription}>
   <Section>
-    <AboutMe />
-    <AboutMarkdownRenderer>
-      <ESGTimeline client:load data={timelineData} />
-    </AboutMarkdownRenderer>
+    <!-- 프로필 카드와 AboutMe를 가로로 배치 -->
+    <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+      <!-- 왼쪽: 프로필 카드 -->
+      <div class="flex-shrink-0 lg:w-1/3">
+        <HeroProfileCard />
+      </div>
+      
+      <!-- 오른쪽: AboutMe -->
+      <div class="flex-1">
+        <AboutMe />
+      </div>
+    </div>
+    
+    <div class="pt-8">
+      <AboutMarkdownRenderer>
+        <ESGTimeline client:load items={items} />
+      </AboutMarkdownRenderer>
+    </div>
   </Section>
 </MainGridLayout>
 
