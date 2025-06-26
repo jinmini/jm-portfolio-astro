@@ -36,6 +36,18 @@ const ESGTimeline: React.FC<ESGTimelineProps> = ({ items: allItems }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'E' | 'S' | 'G'>('all');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
+  const handleKpiCardClick = (slug: string, category: 'E' | 'S' | 'G') => {
+    setActiveTab(category);
+    
+    // DOM 업데이트 후 스크롤
+    requestAnimationFrame(() => {
+      const element = document.getElementById(`esg-item-${slug}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  };
+
   const getCategoryIcon = (category: string) => {
     if (category === 'E') return '🌱';
     if (category === 'S') return '👥';
@@ -117,14 +129,20 @@ const ESGTimeline: React.FC<ESGTimelineProps> = ({ items: allItems }) => {
       <CategoryTabs activeTab={activeTab} onTabChange={setActiveTab} />
       
       {activeTab === 'all' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-4 gap-4 md:gap-6 auto-rows-[240px] [grid-auto-flow:dense]">
-          {kpiItems.slice(0, 12).map(item => (
-            <KPICard key={item.slug} item={item} />
-          ))}
+        <div className="w-full max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-4 gap-4 md:gap-6 auto-rows-[240px] [grid-auto-flow:dense]">
+            {kpiItems.slice(0, 12).map(item => (
+              <KPICard 
+                key={item.slug} 
+                item={item} 
+                onClick={() => handleKpiCardClick(item.slug, item.category)}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="w-full flex justify-center">
-          <div className="relative">
+          <div className="relative w-full max-w-3xl">
             <div className="absolute left-[66px] top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
             {filteredTimelineItems.map((item, index) => (
               <TimelineCard

@@ -3,6 +3,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import { Responsive } from '../../components/common';
 import Section from '../../components/common/Section.astro';
 import Layout from '../../layouts/MainGridLayout.astro';
+import BlogLayout from '../../layouts/BlogLayout.astro';
 
 export async function getStaticPaths() {
   const stories = await getCollection('blog');
@@ -35,98 +36,13 @@ const pageTitle = `${blog.data.title} - 포트폴리오`;
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
-            스토리 목록으로 돌아가기
+            블로그 목록으로 돌아가기
           </a>
         </div>
 
-        <!-- 스토리 헤더 -->
-        <header class="mb-12">
-          <div class="grid lg:grid-cols-2 gap-8 items-center">
-            <!-- 썸네일 -->
-            <div class="order-2 lg:order-1">
-              <div class="relative rounded-2xl overflow-hidden shadow-lg">
-                {blog.data.thumbnail ? (
-                  <img 
-                    src={blog.data.thumbnail} 
-                    alt={blog.data.title}
-                    class="w-full h-64 lg:h-80 object-cover"
-                  />
-                ) : (
-                  <div class="w-full h-64 lg:h-80 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white text-8xl">
-                    📖
-                  </div>
-                )}
-                <span class="absolute top-4 left-4 bg-white/90 text-gray-900 px-3 py-2 rounded-full text-sm font-semibold">
-                  {blog.data.category}
-                </span>
-              </div>
-            </div>
-
-            <!-- 스토리 정보 -->
-            <div class="order-1 lg:order-2">
-              <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                {blog.data.title}
-              </h1>
-              <p class="text-xl text-gray-600 mb-6">
-                {blog.data.description}
-              </p>
-
-              <!-- 메타 정보 -->
-              <div class="space-y-4 mb-8">
-                <div class="grid grid-cols-2 gap-4">
-                  <div>
-                    <span class="text-sm font-medium text-gray-500">게시일</span>
-                    <p class="text-gray-900">{blog.data.date.toLocaleDateString('ko-KR')}</p>
-                  </div>
-                  <div>
-                    <span class="text-sm font-medium text-gray-500">카테고리</span>
-                    <p class="text-gray-900">{blog.data.category}</p>
-                  </div>
-                </div>
-                
-                <!-- 태그들 -->
-                <div>
-                  <span class="text-sm font-medium text-gray-500 block mb-2">태그</span>
-                  <div class="flex flex-wrap gap-2">
-                    {blog.data.tags.map((tag) => (
-                      <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <!-- 소셜 공유 버튼들 -->
-              <div class="flex flex-wrap gap-4">
-                <button 
-                  onclick={`navigator.share && navigator.share({title: '${blog.data.title}', url: window.location.href})`}
-                  class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
-                  </svg>
-                  공유하기
-                </button>
-                
-                <a 
-                  href={`/blog/${blog.data.category}/page/1`}
-                  class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                  </svg>
-                  {blog.data.category} 더보기
-                </a>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <!-- 스토리 상세 내용 -->
-        <article class="prose prose-lg max-w-none">
+        <BlogLayout {...blog.data}>
           <Content />
-        </article>
+        </BlogLayout>
 
         <!-- 관련 스토리 -->
         <footer class="mt-16 pt-8 border-t border-gray-200">

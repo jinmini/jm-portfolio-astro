@@ -39,8 +39,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
 
       <div 
         className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-sky-500 flex flex-col"
-        style={{ 
-          width: '585.19px', 
+        style={{
           minHeight: '279px',
           height: isExpanded ? 'auto' : '279px'
         }}
