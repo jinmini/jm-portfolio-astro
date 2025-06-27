@@ -1,0 +1,63 @@
+---
+// 이 컴포넌트는 현재 순수하게 UI 구조만 담당합니다.
+// 모든 동적 로직은 project.astro 페이지의 <script> 태그에서 처리됩니다.
+---
+<div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+    <!-- 모달 헤더 -->
+    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+      <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white"></h2>
+      <button 
+        onclick="closeProjectModal()"
+        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 모달 컨텐츠 -->
+    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+      <!-- 이미지 슬라이더 영역 -->
+      <div id="imageSlider" class="mb-6">
+        <div class="relative aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+          <div id="currentSlide" class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-8xl">
+            🚀
+          </div>
+          
+          <!-- 슬라이더 네비게이션 -->
+          <button 
+            id="prevBtn"
+            onclick="previousSlide()"
+            class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          
+          <button 
+            id="nextBtn"
+            onclick="nextSlide()"
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 슬라이더 인디케이터 -->
+        <div id="slideIndicators" class="flex justify-center mt-4 space-x-2">
+          <!-- JavaScript로 동적 생성 -->
+        </div>
+      </div>
+
+      <!-- 프로젝트 정보 -->
+      <div id="modalContent">
+        <!-- JavaScript로 동적 생성 -->
+      </div>
+    </div>
+  </div>
+</div> 
