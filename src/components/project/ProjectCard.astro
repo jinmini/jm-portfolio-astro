@@ -1,5 +1,5 @@
 ---
-import type { Project } from '../../types/Project';
+import type { CollectionEntry } from 'astro:content';
 
 // 테마 타입 정의 (컴포넌트 내부에서 사용)
 type Theme = {
@@ -9,11 +9,12 @@ type Theme = {
 };
 
 export interface Props {
-  project: Project;
+  project: CollectionEntry<'project'>;
   theme: Theme;
 }
 
 const { project, theme } = Astro.props;
+const { slug, data } = project;
 ---
 
 <div class="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
@@ -24,13 +25,13 @@ const { project, theme } = Astro.props;
       <div class="w-full h-full flex items-center justify-center">
         <div class="text-center text-white">
           <div class="text-6xl mb-3 opacity-30">{theme.emoji}</div>
-          <div class="text-2xl font-bold opacity-40">{project.title}</div>
+          <div class="text-2xl font-bold opacity-40">{data.title}</div>
         </div>
       </div>
     </div>
 
     {/* Featured 배지 (항상 표시) */}
-    {project.featured && (
+    {data.featured && (
       <div class="absolute top-4 right-4 z-30">
         <span class="bg-cyan-400 text-cyan-900 px-3 py-1 rounded-full text-xs font-bold shadow-lg border border-cyan-300">
           Featured
@@ -44,15 +45,15 @@ const { project, theme } = Astro.props;
       {/* 상단 영역 - 프로젝트 기본 정보 */}
       <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
         <h3 class="text-xl font-bold text-white mb-2">
-          {project.title}
+          {data.title}
         </h3>
         <p class="text-sm text-gray-200 mb-3 line-clamp-2">
-          {project.description}
+          {data.description}
         </p>
         
         {/* 기술 스택 */}
         <div class="flex flex-wrap gap-1 mb-4">
-          {project.tags.map((tag) => (
+          {data.tags.map((tag) => (
             <span class="px-2 py-1 bg-cyan-500/80 backdrop-blur-sm text-white text-xs rounded-full font-medium border border-cyan-400/50">
               {tag}
             </span>
@@ -63,9 +64,9 @@ const { project, theme } = Astro.props;
       {/* 하단 영역 - 액션 버튼들 */}
       <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-300">
         <div class="flex gap-2 mb-3">
-          {project.links.github && (
+          {data.links.github && (
             <a 
-              href={project.links.github}
+              href={data.links.github}
               target="_blank"
               rel="noopener noreferrer"
               class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-black/70 backdrop-blur-sm text-white rounded-lg hover:bg-black/90 transition-all duration-300 font-medium border border-white/20 text-sm"
@@ -75,9 +76,9 @@ const { project, theme } = Astro.props;
             </a>
           )}
           
-          {project.links.site && (
+          {data.links.site && (
             <a 
-              href={project.links.site}
+              href={data.links.site}
               target="_blank"
               rel="noopener noreferrer"
               class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all duration-300 font-medium border border-white/30 text-sm"
@@ -90,7 +91,7 @@ const { project, theme } = Astro.props;
 
         {/* Details 버튼 */}
         <button 
-          onclick={`openProjectModal(${project.id})`}
+          onclick={`openProjectModal('${slug}')`}
           class="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-medium shadow-lg text-sm"
         >
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

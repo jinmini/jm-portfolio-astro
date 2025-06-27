@@ -2,11 +2,11 @@
 import { Responsive } from '../components/common';
 import Section from '../components/common/Section.astro';
 import Layout from '../layouts/MainGridLayout.astro';
-import { projectsData } from '../data/projects';
+import { getCollection } from 'astro:content';
 import ProjectCard from '../components/project/ProjectCard.astro';
 import ProjectModal from '../components/project/ProjectModal.astro';
 
-const projects = projectsData;
+const projects = await getCollection('project');
 
 // 각 프로젝트별 색상 테마
 const themes = [
@@ -50,15 +50,8 @@ const themes = [
       </div>
   </Section>
 
-  <ProjectModal />
+  <ProjectModal projects={projects} />
 </Layout>
-
-<script>
-  import { initProjectModal } from '../scripts/projectModal';
-  import { projectsData } from '../data/projects';
-  
-  initProjectModal(projectsData);
-</script>
 
 <style>
   /* 부드러운 애니메이션 */

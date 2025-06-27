@@ -18,7 +18,14 @@ const baseContentSchema = z.object({
 // Project 컬렉션 (프로젝트)
 const project = defineCollection({
   type: 'content',
-  schema: baseContentSchema,
+  schema: baseContentSchema.extend({
+    video: z.object({
+      url: z.string(),
+      thumbnail: z.string().optional(),
+      autoplay: z.boolean().default(false),
+      loop: z.boolean().default(true),
+    }).optional(),
+  }),
 });
 
 // Story 컬렉션 (블로그) - category enum 추가

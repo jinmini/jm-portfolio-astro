@@ -1,15 +1,22 @@
 ---
-// 이 컴포넌트는 현재 순수하게 UI 구조만 담당합니다.
-// 모든 동적 로직은 project.astro 페이지의 <script> 태그에서 처리됩니다.
+// 이 컴포넌트는 projects prop을 받아 클라이언트 스크립트로 전달합니다.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  projects: CollectionEntry<'project'>[];
+}
+
+const { projects } = Astro.props;
 ---
 <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-  <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-7xl w-full h-[85vh] overflow-hidden shadow-2xl">
     <!-- 모달 헤더 -->
-    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
       <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white"></h2>
       <button 
-        onclick="closeProjectModal()"
-        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        id="closeModal"
+        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+        aria-label="모달 닫기"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -17,47 +24,381 @@
       </button>
     </div>
 
-    <!-- 모달 컨텐츠 -->
-    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-      <!-- 이미지 슬라이더 영역 -->
-      <div id="imageSlider" class="mb-6">
-        <div class="relative aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-          <div id="currentSlide" class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-8xl">
-            🚀
+    <!-- 2컬럼 메인 컨텐츠 -->
+    <div class="flex flex-col lg:flex-row h-[calc(85vh-88px)]">
+      
+      <!-- 왼쪽: 미디어 영역 (50%) -->
+      <div class="lg:w-1/2 bg-gray-50 dark:bg-gray-900 flex flex-col">
+        <!-- 메인 미디어 -->
+        <div class="flex-1 p-6">
+          <div class="relative h-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+            <div id="currentMedia" class="w-full h-full flex items-center justify-center text-6xl">
+              🚀
+            </div>
+            
+            <!-- 미디어 네비게이션 버튼 -->
+            <button 
+              id="prevMedia"
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition-opacity hidden backdrop-blur-sm"
+              aria-label="이전 미디어"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            
+            <button 
+              id="nextMedia"
+              class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition-opacity hidden backdrop-blur-sm"
+              aria-label="다음 미디어"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
           </div>
-          
-          <!-- 슬라이더 네비게이션 -->
-          <button 
-            id="prevBtn"
-            onclick="previousSlide()"
-            class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-          </button>
-          
-          <button 
-            id="nextBtn"
-            onclick="nextSlide()"
-            class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </button>
         </div>
 
-        <!-- 슬라이더 인디케이터 -->
-        <div id="slideIndicators" class="flex justify-center mt-4 space-x-2">
-          <!-- JavaScript로 동적 생성 -->
+        <!-- 썸네일 갤러리 -->
+        <div class="px-6 pb-6">
+          <div id="mediaIndicators" class="flex justify-center space-x-3">
+            <!-- JavaScript로 동적 생성 -->
+          </div>
         </div>
       </div>
 
-      <!-- 프로젝트 정보 -->
-      <div id="modalContent">
-        <!-- JavaScript로 동적 생성 -->
+      <!-- 오른쪽: 정보 영역 (50%) -->
+      <div class="lg:w-1/2 bg-white dark:bg-gray-800 flex flex-col">
+        <div class="flex-1 p-8 overflow-y-auto">
+          <div id="projectInfo">
+            <!-- JavaScript로 동적 생성 -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div> 
+</div>
+
+<!-- 각 프로젝트의 데이터를 JSON으로 저장 (클라이언트에서 사용) -->
+<script define:vars={{ projects }}>
+  // 프로젝트 데이터를 클라이언트에서 사용할 수 있도록 전역 변수로 설정
+  window.projectsData = projects;
+</script>
+
+<!-- 모달 제어 스크립트 -->
+<script>
+  class ProjectModal {
+    constructor() {
+      this.modal = document.getElementById('projectModal');
+      this.modalTitle = document.getElementById('modalTitle');
+      this.currentMedia = document.getElementById('currentMedia');
+      this.mediaIndicators = document.getElementById('mediaIndicators');
+      this.projectInfo = document.getElementById('projectInfo');
+      this.prevBtn = document.getElementById('prevMedia');
+      this.nextBtn = document.getElementById('nextMedia');
+      this.closeBtn = document.getElementById('closeModal');
+      
+      this.currentProject = null;
+      this.currentMediaIndex = 0;
+      
+      this.setupEventListeners();
+    }
+    
+    setupEventListeners() {
+      // 모달 닫기
+      this.closeBtn?.addEventListener('click', () => this.close());
+      this.modal?.addEventListener('click', (e) => {
+        if (e.target === this.modal) this.close();
+      });
+      
+      // 키보드 이벤트
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') this.close();
+        if (e.key === 'ArrowLeft') this.previousMedia();
+        if (e.key === 'ArrowRight') this.nextMedia();
+      });
+      
+      // 미디어 네비게이션
+      this.prevBtn?.addEventListener('click', () => this.previousMedia());
+      this.nextBtn?.addEventListener('click', () => this.nextMedia());
+    }
+    
+    open(projectSlug) {
+      const project = window.projectsData?.find(p => p.slug === projectSlug);
+      if (!project) return;
+      
+      this.currentProject = project;
+      this.currentMediaIndex = 0;
+      
+      this.updateContent();
+      this.modal?.classList.remove('hidden');
+      this.modal?.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    close() {
+      this.modal?.classList.add('hidden');
+      this.modal?.classList.remove('flex');
+      document.body.style.overflow = 'auto';
+      this.currentProject = null;
+    }
+    
+    updateContent() {
+      if (!this.currentProject) return;
+      
+      const { data } = this.currentProject;
+      
+      // 제목 업데이트
+      if (this.modalTitle) {
+        this.modalTitle.textContent = data.title;
+      }
+      
+      // 미디어 업데이트
+      this.updateMedia();
+      
+      // 프로젝트 정보 업데이트
+      this.updateProjectInfo();
+    }
+    
+    updateMedia() {
+      if (!this.currentProject) return;
+      
+      const { data } = this.currentProject;
+      const hasVideo = data.video?.url;
+      const mediaItems = [];
+      
+      // 영상이 있으면 첫 번째로 추가
+      if (hasVideo) {
+        mediaItems.push({ type: 'video', content: data.video });
+      }
+      
+      // 이미지들 추가 (thumbnail 포함)
+      if (data.thumbnail) {
+        mediaItems.push({ type: 'image', content: data.thumbnail });
+      }
+      
+      // 미디어가 없으면 플레이스홀더
+      if (mediaItems.length === 0) {
+        this.currentMedia.innerHTML = `
+          <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white">
+            <div class="text-center">
+              <div class="text-8xl mb-4">🚀</div>
+              <div class="text-2xl font-bold">${data.title}</div>
+              <div class="text-lg opacity-75">미디어 없음</div>
+            </div>
+          </div>
+        `;
+        this.hideNavigation();
+        return;
+      }
+      
+      // 현재 미디어 표시
+      const currentItem = mediaItems[this.currentMediaIndex];
+      if (currentItem.type === 'video') {
+        this.currentMedia.innerHTML = `
+          <video 
+            class="w-full h-full object-cover" 
+            controls 
+            poster="${currentItem.content.thumbnail || data.thumbnail || ''}"
+            preload="metadata"
+          >
+            <source src="${currentItem.content.url}" type="video/mp4" />
+            당신의 브라우저는 비디오 태그를 지원하지 않습니다.
+          </video>
+        `;
+      } else {
+        this.currentMedia.innerHTML = `
+          <img 
+            src="${currentItem.content}" 
+            alt="${data.title}" 
+            class="w-full h-full object-cover"
+          />
+        `;
+      }
+      
+      // 썸네일 갤러리 업데이트
+      this.updateThumbnails(mediaItems);
+      
+      // 네비게이션 버튼 표시/숨김
+      if (mediaItems.length > 1) {
+        this.showNavigation();
+      } else {
+        this.hideNavigation();
+      }
+      
+      this.mediaItems = mediaItems;
+    }
+    
+    updateThumbnails(mediaItems) {
+      if (!this.mediaIndicators) return;
+      
+      this.mediaIndicators.innerHTML = '';
+      
+      if (mediaItems.length <= 1) return;
+      
+      mediaItems.forEach((item, index) => {
+        const thumbnail = document.createElement('button');
+        thumbnail.className = `relative w-16 h-12 rounded-lg overflow-hidden transition-all border-2 ${
+          index === this.currentMediaIndex 
+            ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
+            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+        }`;
+        
+        if (item.type === 'video') {
+          const thumbnailSrc = item.content.thumbnail || this.currentProject.data.thumbnail;
+          thumbnail.innerHTML = `
+            <img src="${thumbnailSrc}" alt="Video thumbnail" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          `;
+        } else {
+          thumbnail.innerHTML = `
+            <img src="${item.content}" alt="Thumbnail" class="w-full h-full object-cover" />
+          `;
+        }
+        
+        thumbnail.onclick = () => this.goToMedia(index);
+        this.mediaIndicators.appendChild(thumbnail);
+      });
+    }
+    
+    updateProjectInfo() {
+      if (!this.currentProject || !this.projectInfo) return;
+      
+      const { data } = this.currentProject;
+      
+      this.projectInfo.innerHTML = `
+        <!-- 프로젝트 기본 정보 -->
+        <div class="mb-8">
+          <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">${data.title}</h3>
+          ${data.featured ? `
+            <div class="mb-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200">
+                ⭐ Featured Project
+              </span>
+            </div>
+          ` : ''}
+          <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">${data.description}</p>
+        </div>
+        
+        <!-- Technologies 섹션 -->
+        <div class="mb-8">
+          <h4 class="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Technologies
+          </h4>
+          <div class="flex flex-wrap gap-2">
+            ${data.tags.map(tag => 
+              `<span class="px-3 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm rounded-full font-medium shadow-sm hover:shadow-md transition-shadow">${tag}</span>`
+            ).join('')}
+          </div>
+        </div>
+        
+        <!-- Features 섹션 (MDX 컨텐츠에서 가져오기 - 임시로 샘플 데이터) -->
+        <div class="mb-8">
+          <h4 class="text-lg font-semibold text-green-600 dark:text-green-400 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+            Features
+          </h4>
+          <ul class="space-y-3 text-gray-600 dark:text-gray-300">
+            <li class="flex items-start">
+              <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>Real-time 3D surgical simulations</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>Multi-user VR collaboration</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>AI-driven feedback system</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- 프로젝트 메타 정보 -->
+        <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">프로젝트 날짜</div>
+          <div class="text-gray-900 dark:text-white font-medium">${new Date(data.date).toLocaleDateString('ko-KR')}</div>
+        </div>
+        
+        <!-- 액션 버튼들 -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          ${data.links?.site ? `
+            <a href="${data.links.site}" target="_blank" rel="noopener noreferrer"
+               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+              Visit Project
+            </a>
+          ` : ''}
+          ${data.links?.github ? `
+            <a href="${data.links.github}" target="_blank" rel="noopener noreferrer" 
+               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+              </svg>
+              GitHub
+            </a>
+          ` : ''}
+          ${data.links?.demo ? `
+            <a href="${data.links.demo}" target="_blank" rel="noopener noreferrer"
+               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M19 10a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Live Demo
+            </a>
+          ` : ''}
+        </div>
+      `;
+    }
+    
+    goToMedia(index) {
+      this.currentMediaIndex = index;
+      this.updateMedia();
+    }
+    
+    previousMedia() {
+      if (!this.mediaItems || this.mediaItems.length <= 1) return;
+      this.currentMediaIndex = this.currentMediaIndex > 0 ? this.currentMediaIndex - 1 : this.mediaItems.length - 1;
+      this.updateMedia();
+    }
+    
+    nextMedia() {
+      if (!this.mediaItems || this.mediaItems.length <= 1) return;
+      this.currentMediaIndex = this.currentMediaIndex < this.mediaItems.length - 1 ? this.currentMediaIndex + 1 : 0;
+      this.updateMedia();
+    }
+    
+    showNavigation() {
+      this.prevBtn?.classList.remove('hidden');
+      this.nextBtn?.classList.remove('hidden');
+    }
+    
+    hideNavigation() {
+      this.prevBtn?.classList.add('hidden');
+      this.nextBtn?.classList.add('hidden');
+    }
+  }
+  
+  // 모달 인스턴스 생성 및 전역 함수 등록
+  const modal = new ProjectModal();
+  window.openProjectModal = (slug) => modal.open(slug);
+  window.closeProjectModal = () => modal.close();
+</script> 

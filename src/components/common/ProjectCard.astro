@@ -1,24 +1,18 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import type { Project } from '../../types/Project';
 
 interface Props {
-  project: CollectionEntry<'project'> | Project;
+  project: CollectionEntry<'project'>;
   variant?: 'simple' | 'detailed';
   index?: number;
 }
 
 const { project, variant = 'simple', index = 0 } = Astro.props;
+const { slug, data } = project;
+const { title, description, date, thumbnail, video, tags = [], links, featured } = data;
 
-// content collection인지 일반 Project 타입인지 구분
-const isContentCollection = 'slug' in project && 'data' in project;
-const projectData = isContentCollection ? (project as CollectionEntry<'project'>).data : (project as Project);
-const projectSlug = isContentCollection ? (project as CollectionEntry<'project'>).slug : (project as Project).id.toString();
-
-const { title, description, date, thumbnail, video, tags = [], links, featured } = projectData;
-
-// date/year 필드 처리 (content collection은 date, 일반 Project는 year)
-const displayDate = date ? new Date(date).toLocaleDateString('ko-KR') : (projectData as Project).year;
+// date 표시 형식
+const displayDate = new Date(date).toLocaleDateString('ko-KR');
 
 // detailed variant에서 홀수 인덱스일 때 이미지와 콘텐츠 순서 변경
 const isReversed = variant === 'detailed' && index % 2 === 1;
@@ -178,7 +172,7 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
               )}
               
               <a 
-                href={`/project/${projectSlug}`}
+                href={`/project/${slug}`}
                 class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-green-600 hover:bg-white transition-colors transform hover:scale-110"
                 aria-label="프로젝트 상세보기"
               >
@@ -250,7 +244,7 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
             )}
             
             <a 
-              href={`/project/${projectSlug}`}
+              href={`/project/${slug}`}
               class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-medium"
             >
               자세히 보기 →
