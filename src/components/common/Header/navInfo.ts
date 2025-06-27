@@ -12,7 +12,7 @@ const navInfo: NavInfo[] = [
   },
   {
     name: '프로젝트',
-    path: '/project/page/1',
+    path: '/project',
     animation: 'animate-[slideInStagger_0.6s_ease-out_0.1s_forwards]',
   },
   {
@@ -32,7 +32,7 @@ export const NAV_INFO = {
     },
     {
       name: 'Project',
-      path: '/project/page/1',
+      path: '/project',
     },
     {
       name: 'Blog',

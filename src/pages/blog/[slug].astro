@@ -9,7 +9,7 @@ export async function getStaticPaths() {
   const stories = await getCollection('blog');
   const publishedStories = stories.filter(blog => !blog.data.draft);
   return publishedStories.map((blog) => ({
-    params: { id: blog.id },
+    params: { slug: blog.slug },
     props: { blog },
   }));
 }
@@ -43,30 +43,32 @@ const pageTitle = `${blog.data.title} - 포트폴리오`;
         <BlogLayout {...blog.data}>
           <Content />
         </BlogLayout>
-
-        <!-- 관련 스토리 -->
-        <footer class="mt-16 pt-8 border-t border-gray-200">
-          <div class="text-center">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">더 많은 스토리 보기</h2>
-            <div class="flex flex-wrap justify-center gap-4">
-              <a 
-                href="/blog/all/page/1"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                전체 스토리
-              </a>
-              <a 
-                href={`/blog/${blog.data.category}/page/1`}
-                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                {blog.data.category} 카테고리
-              </a>
-            </div>
-          </div>
-        </footer>
       </div>
     </Responsive>
   </Section>
+
+  <!-- 관련 블로그 -->
+  <footer class="mt-16 py-8 border-t border-gray-200">
+    <div class="max-w-screen-md mx-auto px-4">
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">더 많은 블로그 보기</h2>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a 
+            href="/blog/all/page/1"
+            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            전체 블로그
+          </a>
+          <a 
+            href={`/blog/${blog.data.category}/page/1`}
+            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            {blog.data.category} 카테고리
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
 </Layout>
 
 <style>

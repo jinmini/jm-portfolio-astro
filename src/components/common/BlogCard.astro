@@ -1,0 +1,93 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  blog: CollectionEntry<'blog'>;
+  variant?: 'simple' | 'detailed';
+}
+
+const { blog, variant = 'simple' } = Astro.props;
+const { slug, data } = blog;
+const { title, description, date, category, thumbnail, tags = [] } = data;
+---
+
+<a href={`/blog/${slug}`} class="group relative flex flex-col rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden">
+  <!-- 이미지 영역 -->
+  <div class={`relative overflow-hidden ${variant === 'detailed' ? 'aspect-[4/3]' : 'aspect-[5/3]'}`}>
+    {thumbnail ? (
+      <img src={thumbnail} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+    ) : (
+      <div class="w-full h-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white text-6xl">
+        📖
+      </div>
+    )}
+    
+    {variant === 'detailed' ? (
+      <!-- Detailed variant: 카테고리 배지를 이미지 위에 -->
+      <span class="absolute top-3 left-3 bg-white/90 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold">
+        {category}
+      </span>
+    ) : (
+      <!-- Simple variant: 그라데이션 오버레이 -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent"></div>
+    )}
+  </div>
+
+  <!-- 컨텐츠 영역 -->
+  <div class="p-6 flex flex-col flex-grow">
+    {variant === 'simple' && category && (
+      <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-2">{category}</span>
+    )}
+    
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 transition-colors">
+      {title}
+    </h3>
+    
+    <p class="text-gray-600 dark:text-gray-400 text-sm flex-grow mb-4 line-clamp-3">
+      {description}
+    </p>
+    
+    {variant === 'detailed' && tags.length > 0 && (
+      <!-- 태그들 (detailed variant에만 표시) - 더 컴팩트하게 -->
+      <div class="flex flex-wrap gap-1.5 mb-3">
+        {tags.slice(0, 2).map((tag) => (
+          <span class="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
+            {tag}
+          </span>
+        ))}
+        {tags.length > 2 && (
+          <span class="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+            +{tags.length - 2}
+          </span>
+        )}
+      </div>
+    )}
+    
+    <!-- 날짜와 링크 -->
+    {variant === 'detailed' ? (
+      <!-- Detailed variant: 날짜 + 읽기 링크 -->
+      <div class="flex items-center justify-between">
+        <time datetime={date.toISOString()} class="text-sm text-gray-500 dark:text-gray-400">
+          {date.toLocaleDateString('ko-KR')}
+        </time>
+        <span class="text-blue-600 hover:text-blue-700 transition-colors font-medium text-sm">
+          읽어보기 →
+        </span>
+      </div>
+    ) : (
+      <!-- Simple variant: 날짜만 -->
+      <time datetime={date.toISOString()} class="text-sm text-gray-500 dark:text-gray-400 mt-auto">
+        {date.toLocaleDateString('ko-KR')}
+      </time>
+    )}
+  </div>
+</a>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style> 

@@ -3,7 +3,9 @@ import Layout from '../layouts/MainGridLayout.astro';
 import Section from '../components/common/Section.astro';
 import SplineViewer from '../components/SplineViewer.jsx';
 import { getCollection } from 'astro:content';
-import { ProjectCard, Responsive, BlogCard } from '../components/common';
+import { Responsive } from '../components/common';
+import BlogCard from '../components/common/BlogCard.astro';
+import ProjectCard from '../components/common/ProjectCard.astro';
 import HeroProfileCard from '../components/hero/HeroProfileCard.astro';
 
 // 최근 프로젝트와 스토리 가져오기
@@ -106,7 +108,7 @@ const recentStories = stories
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {featuredProjects.length > 0 ? (
           featuredProjects.map((project) => (
-            <ProjectCard project={project} client:visible />
+            <ProjectCard project={project} variant="simple" />
           ))
         ) : (
           <div class="col-span-full text-center py-12">
@@ -119,7 +121,7 @@ const recentStories = stories
       {featuredProjects.length > 0 && (
         <div class="text-center mt-12">
           <a 
-            href="/project/page/1" 
+                            href="/project" 
             class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
           >
             모든 프로젝트 보기 →
@@ -138,7 +140,7 @@ const recentStories = stories
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {recentStories.length > 0 ? (
           recentStories.map((blog) => (
-            <BlogCard blog={blog} client:load />
+            <BlogCard blog={blog} variant="simple" />
           ))
         ) : (
           <div class="col-span-full text-center py-12">
