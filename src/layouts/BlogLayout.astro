@@ -107,4 +107,20 @@ const { title, date, category, thumbnail } = Astro.props;
     padding: 0;
     color: inherit;
   }
+
+  /* Responsive typography for smaller screens */
+  @media (max-width: 640px) {
+    .prose h1 {
+      font-size: 1.875rem; /* 30px */
+    }
+    .prose h2 {
+      font-size: 1.5rem; /* 24px */
+    }
+    .prose h3 {
+      font-size: 1.25rem; /* 20px */
+    }
+    .prose p {
+      font-size: 0.95rem;
+    }
+  }
 </style> 
