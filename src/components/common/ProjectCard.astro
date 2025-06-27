@@ -1,15 +1,24 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { Project } from '../../types/Project';
 
 interface Props {
-  project: CollectionEntry<'project'>;
+  project: CollectionEntry<'project'> | Project;
   variant?: 'simple' | 'detailed';
   index?: number;
 }
 
 const { project, variant = 'simple', index = 0 } = Astro.props;
-const { slug, data } = project;
-const { title, description, date, thumbnail, tags = [], links, featured } = data;
+
+// content collection인지 일반 Project 타입인지 구분
+const isContentCollection = 'slug' in project && 'data' in project;
+const projectData = isContentCollection ? (project as CollectionEntry<'project'>).data : (project as Project);
+const projectSlug = isContentCollection ? (project as CollectionEntry<'project'>).slug : (project as Project).id.toString();
+
+const { title, description, date, thumbnail, video, tags = [], links, featured } = projectData;
+
+// date/year 필드 처리 (content collection은 date, 일반 Project는 year)
+const displayDate = date ? new Date(date).toLocaleDateString('ko-KR') : (projectData as Project).year;
 
 // detailed variant에서 홀수 인덱스일 때 이미지와 콘텐츠 순서 변경
 const isReversed = variant === 'detailed' && index % 2 === 1;
@@ -35,10 +44,40 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
       )}
     </div>
 
-    <div class="relative aspect-video overflow-hidden rounded-t-2xl">
-      {thumbnail ? (
+    <div class="relative aspect-video overflow-hidden rounded-t-2xl group">
+      {video ? (
+        <!-- 영상이 있는 경우 -->
+        <div class="relative w-full h-full">
+          <video 
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            muted
+            loop={video.loop !== false}
+            autoplay={video.autoplay === true}
+            poster={video.thumbnail || thumbnail}
+            preload="metadata"
+            playsinline
+          >
+            <source src={video.url} type="video/mp4" />
+            <!-- 폴백: 영상을 지원하지 않는 브라우저 -->
+            {thumbnail && (
+              <img src={thumbnail} alt={title} class="w-full h-full object-cover" />
+            )}
+          </video>
+          
+          <!-- 비디오 컨트롤 오버레이 (호버 시 표시) -->
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+            <div class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-gray-900 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      ) : thumbnail ? (
+        <!-- 영상이 없고 썸네일이 있는 경우 -->
         <img src={thumbnail} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
       ) : (
+        <!-- 영상도 썸네일도 없는 경우 -->
         <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-6xl">
           🚀
         </div>
@@ -64,16 +103,37 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
   <article class={`group bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
     <div class="lg:flex lg:items-center lg:gap-8">
       
-      <!-- 프로젝트 이미지 -->
+      <!-- 프로젝트 이미지/영상 -->
       <div class="lg:w-1/2 relative overflow-hidden">
-        <div class="relative h-64 lg:h-80">
-          {thumbnail ? (
+        <div class="relative h-64 lg:h-80 group">
+          {video ? (
+            <!-- 영상이 있는 경우 -->
+            <div class="relative w-full h-full">
+              <video 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                muted
+                loop={video.loop !== false}
+                autoplay={video.autoplay === true}
+                poster={video.thumbnail || thumbnail}
+                preload="metadata"
+                playsinline
+              >
+                <source src={video.url} type="video/mp4" />
+                <!-- 폴백: 영상을 지원하지 않는 브라우저 -->
+                {thumbnail && (
+                  <img src={thumbnail} alt={title} class="w-full h-full object-cover" />
+                )}
+              </video>
+            </div>
+          ) : thumbnail ? (
+            <!-- 영상이 없고 썸네일이 있는 경우 -->
             <img 
               src={thumbnail} 
               alt={title}
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
+            <!-- 영상도 썸네일도 없는 경우 -->
             <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-6xl">
               🚀
             </div>
@@ -118,7 +178,7 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
               )}
               
               <a 
-                href={`/project/${slug}`}
+                href={`/project/${projectSlug}`}
                 class="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center text-green-600 hover:bg-white transition-colors transform hover:scale-110"
                 aria-label="프로젝트 상세보기"
               >
@@ -157,7 +217,7 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
             </svg>
-            {date.toLocaleDateString('ko-KR')}
+            {displayDate}
           </span>
           
           <div class="flex items-center gap-4">
@@ -190,7 +250,7 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
             )}
             
             <a 
-              href={`/project/${slug}`}
+              href={`/project/${projectSlug}`}
               class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-medium"
             >
               자세히 보기 →
@@ -200,4 +260,48 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
       </div>
     </div>
   </article>
-)} 
+)}
+
+<!-- 영상 제어를 위한 스크립트 -->
+<script>
+  // 영상 자동재생 및 호버 이벤트 처리
+  document.addEventListener('DOMContentLoaded', () => {
+    const videoElements = document.querySelectorAll('video[autoplay]');
+    
+    videoElements.forEach(video => {
+      // 교차 관찰자로 화면에 보일 때만 재생
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              video.play().catch(() => {
+                // 자동재생이 실패하면 포스터 이미지 표시
+                console.log('자동재생이 차단되었습니다.');
+              });
+            } else {
+              video.pause();
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+      
+      observer.observe(video);
+      
+      // 호버 시 재생 상태 토글
+      const container = video.closest('.group');
+      if (container) {
+        container.addEventListener('mouseenter', () => {
+          video.play().catch(() => {});
+        });
+        
+        container.addEventListener('mouseleave', () => {
+          // autoplay가 true인 경우에만 계속 재생
+          if (!video.hasAttribute('autoplay')) {
+            video.pause();
+          }
+        });
+      }
+    });
+  });
+</script> 

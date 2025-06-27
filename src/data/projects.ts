@@ -8,6 +8,12 @@ export const projectsData: Project[] = [
     year: "2024",
     tags: ["React", "Three.js", "WebXR"],
     thumbnail: "/images/projects/project-1-thumb.jpg",
+    video: {
+      url: "/videos/neuroverse-demo.mp4", // 샘플 영상 (실제 파일은 추후 추가)
+      thumbnail: "/images/projects/project-1-video-thumb.jpg",
+      autoplay: true,
+      loop: true
+    },
     images: [
       "/images/projects/project-1-01.jpg",
       "/images/projects/project-1-02.jpg",

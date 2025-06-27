@@ -7,10 +7,16 @@ import { Responsive } from '../components/common';
 import BlogCard from '../components/common/BlogCard.astro';
 import ProjectCard from '../components/common/ProjectCard.astro';
 import HeroProfileCard from '../components/hero/HeroProfileCard.astro';
+import { projectsData } from '../data/projects';
 
 // 최근 프로젝트와 스토리 가져오기
 const projects = await getCollection('project');
 const stories = await getCollection('blog');
+
+// projectsData에서 featured 프로젝트 가져오기 (영상 지원 테스트용)
+const featuredProjectsFromData = projectsData
+  .filter(p => p.featured)
+  .slice(0, 3);
 
 const featuredProjects = projects
   .filter(p => p.data.featured)
@@ -106,8 +112,8 @@ const recentStories = stories
         주요 프로젝트
       </h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {featuredProjects.length > 0 ? (
-          featuredProjects.map((project) => (
+        {featuredProjectsFromData.length > 0 ? (
+          featuredProjectsFromData.map((project) => (
             <ProjectCard project={project} variant="simple" />
           ))
         ) : (
@@ -118,7 +124,7 @@ const recentStories = stories
           </div>
         )}
       </div>
-      {featuredProjects.length > 0 && (
+      {featuredProjectsFromData.length > 0 && (
         <div class="text-center mt-12">
           <a 
                             href="/project" 
