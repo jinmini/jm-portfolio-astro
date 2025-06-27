@@ -1,5 +1,5 @@
 export { default as Responsive } from './Responsive';
-export { ProjectCard } from './ProjectCard';
-export { BlogCard } from './BlogCard';
+// ProjectCard is now an Astro component and should be imported directly
+// BlogCard is now an Astro component and should be imported directly
 
 

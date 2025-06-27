@@ -9,7 +9,8 @@ const baseContentSchema = z.object({
   thumbnail: z.string().optional(),
   links: z.object({
     github: z.string().optional(),
-    site: z.string().optional()
+    site: z.string().optional(),
+    demo: z.string().optional()
   }).optional(),
   featured: z.boolean().default(false),
 });
