@@ -1,16 +1,28 @@
 ---
 import '../styles/global.css';
+import { ViewTransitions } from 'astro:transitions';
 
 export interface Props {
 	title: string;
 	description?: string;
+	ogImage?: string;
+	noIndex?: boolean;
 }
 
-const { title, description = "개인 포트폴리오 & 블로그" } = Astro.props;
+const { 
+	title = "김진민 - ESG × AI Specialist",
+	description = "ESG 전문가와 개발자의 독특한 조합으로 25개 기업의 탄소 23% 감축을 이끌어낸 AI PM의 지속가능한 기술 솔루션",
+	ogImage = "/images/og-default.jpg",
+	noIndex = false 
+} = Astro.props;
+
+const canonicalURL = Astro.site 
+  ? new URL(Astro.url.pathname, Astro.site)
+  : new URL(Astro.url.pathname, `http://localhost:4322`);
 ---
 
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
@@ -18,31 +30,105 @@ const { title, description = "개인 포트폴리오 & 블로그" } = Astro.prop
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		<slot name="meta" />
-		<script is:inline>
-			const theme = (() => {
-				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-					return localStorage.getItem('theme');
+		
+		<!-- Canonical URL -->
+		<link rel="canonical" href={canonicalURL} />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={Astro.site ? new URL(ogImage, Astro.site) : `http://localhost:4322${ogImage}`} />
+		<meta property="og:locale" content="ko_KR" />
+		
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content={canonicalURL} />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content={Astro.site ? new URL(ogImage, Astro.site) : `http://localhost:4322${ogImage}`} />
+		
+		<!-- Structured Data -->
+		<script type="application/ld+json" is:inline>
+			{
+				"@context": "https://schema.org",
+				"@type": "Person",
+				"name": "김진민",
+				"alternateName": "Jin Min Kim",
+				"jobTitle": "ESG × AI Specialist",
+				"description": "ESG 전문가와 개발자의 독특한 조합으로 지속가능한 기술 솔루션을 개발하는 AI PM",
+				"url": "https://jm-portfolio-astro.vercel.app",
+				"sameAs": [
+					"mailto:charmjinmean@gmail.com"
+				],
+				"knowsAbout": [
+					"ESG 컨설팅",
+					"탄소중립",
+					"AI 프로젝트 관리",
+					"지속가능성",
+					"환경 기술"
+				],
+				"hasOccupation": {
+					"@type": "Occupation",
+					"name": "AI PM & ESG Specialist",
+					"occupationLocation": {
+						"@type": "Country",
+						"name": "대한민국"
+					}
 				}
-				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-					return 'dark';
-				}
-				return 'light';
-			})();
-
-			if (theme === 'light') {
-				document.documentElement.classList.remove('dark');
-			} else {
-				document.documentElement.classList.add('dark');
 			}
-			// This is required for Astro's view transitions
-			document.documentElement.setAttribute('data-theme', theme);
 		</script>
+		
+		<!-- SEO Meta -->
+		{noIndex && <meta name="robots" content="noindex, nofollow" />}
+		<meta name="keywords" content="ESG, 탄소중립, AI PM, 지속가능성, 환경 컨설팅, 김진민" />
+		<meta name="author" content="김진민 (Jin Min Kim)" />
+		
+		<!-- Preload Critical Assets -->
+		<link rel="preload" href="/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin />
+		
+		<!-- View Transitions API -->
+		<ViewTransitions />
 	</head>
-	<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+	<body class="font-pretendard antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
 		<div class="flex flex-col min-h-screen">
 			<slot />
 		</div>
+		
+		<!-- Global Scripts -->
+		<script>
+			// View Transitions 개선
+			document.addEventListener('astro:page-load', () => {
+				// 스크롤 위치 복원
+				if (document.startViewTransition) {
+					const scrollY = sessionStorage.getItem('scrollY');
+					if (scrollY) {
+						window.scrollTo(0, parseInt(scrollY));
+						sessionStorage.removeItem('scrollY');
+					}
+				}
+				
+				// 페이지 로드 시 애니메이션 재초기화
+				const observer = new IntersectionObserver((entries) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							entry.target.classList.add('animate-fade-in-up');
+							observer.unobserve(entry.target);
+						}
+					});
+				}, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+
+				document.querySelectorAll('.animate-on-scroll').forEach(el => {
+					observer.observe(el);
+				});
+			});
+			
+			// 페이지 이동 전 스크롤 위치 저장
+			document.addEventListener('astro:before-swap', () => {
+				sessionStorage.setItem('scrollY', window.scrollY.toString());
+			});
+		</script>
 	</body>
 </html>
 

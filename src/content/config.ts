@@ -25,6 +25,13 @@ const project = defineCollection({
       autoplay: z.boolean().default(false),
       loop: z.boolean().default(true),
     }).optional(),
+    features: z.array(z.string()).optional(),
+    impact: z.object({
+      users: z.string().optional(),
+      companies: z.string().optional(),
+      improvement: z.string().optional(),
+      cost_saving: z.string().optional(),
+    }).optional(),
   }),
 });
 

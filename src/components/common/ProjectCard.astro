@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 
 interface Props {
   project: CollectionEntry<'project'>;
@@ -37,9 +38,13 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
         {thumbnail ? (
           <img 
             src={thumbnail} 
-            alt={title} 
+            alt={`${title} 프로젝트 썸네일`} 
             class="thumbnail-image w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
+            decoding="async"
+            width="800"
+            height="500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 800px"
           />
         ) : (
           <div class="w-full h-full bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center text-white text-8xl animate-pulse-gradient">
@@ -154,9 +159,13 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
         {thumbnail ? (
           <img 
             src={thumbnail} 
-            alt={title} 
+            alt={`${title} 프로젝트 썸네일`} 
             class="thumbnail-image w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
+            decoding="async"
+            width="400"
+            height="300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
           />
         ) : (
           <div class="w-full h-full bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center text-white text-4xl animate-pulse-gradient">

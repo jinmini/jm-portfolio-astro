@@ -4,7 +4,9 @@ import Section from '../components/common/Section.astro';
 import { getCollection } from 'astro:content';
 import BlogCard from '../components/common/BlogCard.astro';
 import ProjectCard from '../components/common/ProjectCard.astro';
+import ProjectModal from '../components/project/ProjectModal.astro';
 import HeroSection from '../components/hero/HeroSection.astro';
+import { ScrollReveal } from '../components/common';
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -35,7 +37,13 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 	<!-- Projects Preview Section -->
 	<section class="py-20 bg-gray-50 dark:bg-black">
 		<Section size="normal">
-			<div class="text-center mb-16">
+			<ScrollReveal 
+				direction="fade" 
+				delay={0} 
+				duration={1000}
+				className="text-center mb-16"
+				client:load
+			>
 				<div class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-6">
 					<span class="relative flex h-2 w-2">
 						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -49,54 +57,74 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 				<p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
 					ESG 전문성과 개발 기술을 결합한 실제 프로젝트들을 확인해보세요
 				</p>
-			</div>
+			</ScrollReveal>
 
 			{featuredProjects.length > 0 ? (
 				<div class="space-y-8">
-					<!-- Featured 프로젝트 레이아웃 -->
+					<!-- Featured 프로젝트 레이아웃 (순차 애니메이션 적용) -->
 					<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 auto-rows-min">
 						
 						<!-- 메인 Featured 프로젝트 (큰 카드) -->
 						{mainFeaturedProject && (
-							<div class="lg:col-span-8">
+							<ScrollReveal 
+								direction="up" 
+								delay={0} 
+								duration={800}
+								className="lg:col-span-8"
+								client:load
+							>
 								<ProjectCard 
 									project={mainFeaturedProject} 
 									variant="featured" 
 									class="h-full"
 								/>
-							</div>
+							</ScrollReveal>
 						)}
 
 						<!-- 서브 Featured 프로젝트들 (작은 카드들) -->
 						{subFeaturedProjects.length > 0 && (
 							<div class="lg:col-span-4 space-y-6">
 								{subFeaturedProjects.map((project, index) => (
-									<ProjectCard 
-										project={project} 
-										variant="compact"
-										index={index}
-									/>
+									<ScrollReveal 
+										direction="up" 
+										delay={200 + (index * 150)} 
+										duration={700}
+										client:load
+									>
+										<ProjectCard 
+											project={project} 
+											variant="compact"
+											index={index}
+										/>
+									</ScrollReveal>
 								))}
 								
 								<!-- 추가 프로젝트 보기 카드 -->
 								{featuredProjects.length >= 3 && (
-									<div class="relative group">
-										<div class="aspect-[4/3] bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-green-500/10 dark:from-blue-500/20 dark:via-purple-500/20 dark:to-green-500/20 rounded-2xl border-2 border-dashed border-blue-300 dark:border-blue-600 flex flex-col items-center justify-center text-center p-6 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 cursor-pointer">
-											<div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-												<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-												</svg>
+									<ScrollReveal 
+										direction="up" 
+										delay={500} 
+										duration={600}
+										client:load
+									>
+										<div class="relative group">
+											<div class="aspect-[4/3] bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-green-500/10 dark:from-blue-500/20 dark:via-purple-500/20 dark:to-green-500/20 rounded-2xl border-2 border-dashed border-blue-300 dark:border-blue-600 flex flex-col items-center justify-center text-center p-6 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 cursor-pointer">
+												<div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+													<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+													</svg>
+												</div>
+												<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">더 많은 프로젝트</h3>
+												<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">다양한 프로젝트들을 확인해보세요</p>
+												<a 
+													href="/project"
+													class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium text-sm"
+												>
+													전체 보기 →
+												</a>
 											</div>
-											<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">더 많은 프로젝트</h3>
-											<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">다양한 프로젝트들을 확인해보세요</p>
-											<a 
-												href="/project"
-												class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium text-sm"
-											>
-												전체 보기 →
-											</a>
 										</div>
-									</div>
+									</ScrollReveal>
 								)}
 							</div>
 						)}
@@ -150,7 +178,13 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 
 			<!-- 전체 프로젝트 보기 버튼 (프로젝트가 있을 때만) -->
 			{featuredProjects.length > 0 && (
-				<div class="text-center mt-16">
+				<ScrollReveal 
+					direction="up" 
+					delay={800} 
+					duration={600}
+					className="text-center mt-16"
+					client:load
+				>
 					<a 
 						href="/project" 
 						class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg text-lg"
@@ -163,7 +197,7 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
 						</svg>
 					</a>
-				</div>
+				</ScrollReveal>
 			)}
 		</Section>
 	</section>
@@ -171,7 +205,13 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 	<!-- Stories Preview Section -->
 	<section class="py-20 bg-white dark:bg-gray-800">
 		<Section size="normal">
-			<div class="text-center mb-12">
+			<ScrollReveal 
+				direction="fade" 
+				delay={0} 
+				duration={800}
+				className="text-center mb-12"
+				client:load
+			>
 				<div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
 					<span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
 					Latest Posts
@@ -182,30 +222,54 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 				<p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
 					기술, ESG, 그리고 지속가능한 개발에 대한 인사이트를 공유합니다
 				</p>
-			</div>
+			</ScrollReveal>
 			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 				{recentStories.length > 0 ? (
-					recentStories.map((blog) => (
-						<BlogCard blog={blog} variant="simple" />
+					recentStories.map((blog, index) => (
+						<ScrollReveal 
+							direction="up" 
+							delay={index * 150} 
+							duration={600}
+							client:load
+						>
+							<BlogCard blog={blog} variant="simple" />
+						</ScrollReveal>
 					))
 				) : (
-					<div class="col-span-full text-center py-12">
-						<div class="text-6xl mb-4">📝</div>
-						<p class="text-gray-600 dark:text-gray-300 text-lg">블로그를 준비 중입니다.</p>
-						<p class="text-gray-500 dark:text-gray-400 mt-2">흥미로운 이야기들을 곧 공유하겠습니다!</p>
-					</div>
+					<ScrollReveal 
+						direction="fade" 
+						delay={0} 
+						duration={800}
+						className="col-span-full"
+						client:load
+					>
+						<div class="text-center py-12">
+							<div class="text-6xl mb-4">📝</div>
+							<p class="text-gray-600 dark:text-gray-300 text-lg">블로그를 준비 중입니다.</p>
+							<p class="text-gray-500 dark:text-gray-400 mt-2">흥미로운 이야기들을 곧 공유하겠습니다!</p>
+						</div>
+					</ScrollReveal>
 				)}
 			</div>
 			{recentStories.length > 0 && (
-				<div class="text-center mt-12">
+				<ScrollReveal 
+					direction="up" 
+					delay={600} 
+					duration={600}
+					className="text-center mt-12"
+					client:load
+				>
 					<a 
 						href="/blog/all/page/1" 
 						class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
 					>
 						모든 블로그 보기 →
 					</a>
-				</div>
+				</ScrollReveal>
 			)}
 		</Section>
 	</section>
+
+	<!-- Project Modal -->
+	<ProjectModal projects={projects} />
 </Layout>
