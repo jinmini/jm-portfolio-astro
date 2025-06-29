@@ -13,8 +13,6 @@
     "@astrojs/react": "^4.3.0",
     "@astrojs/tailwind": "^6.0.2",
     "@heroicons/react": "^2.2.0",
-    "@splinetool/react-spline": "^4.0.0",
-    "@splinetool/runtime": "^1.10.12",
     "@tabler/icons-react": "^3.33.0",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",

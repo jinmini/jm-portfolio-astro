@@ -1,12 +1,13 @@
 ---
 import Layout from '../layouts/MainGridLayout.astro';
 import Section from '../components/common/Section.astro';
-import SplineViewer from '../components/SplineViewer.jsx';
 import { getCollection } from 'astro:content';
-import { Responsive } from '../components/common';
 import BlogCard from '../components/common/BlogCard.astro';
 import ProjectCard from '../components/common/ProjectCard.astro';
-import HeroProfileCard from '../components/hero/HeroProfileCard.astro';
+import HeroSection from '../components/hero/HeroSection.astro';
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 
 // 최근 프로젝트와 스토리 가져오기
 const projects = await getCollection('project');
@@ -21,248 +22,190 @@ const recentStories = stories
   .filter(blog => !blog.data.draft)
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
   .slice(0, 3);
+
+// 프로젝트 레이아웃 구성
+const mainFeaturedProject = featuredProjects[0];
+const subFeaturedProjects = featuredProjects.slice(1, 3);
 ---
 
 <Layout title="김진민 - 지속가능한 미래를 설계합니다">
-  <!-- Hero Section -->
-  <section class="pt-16 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white dark:from-slate-900 dark:via-gray-900 dark:to-black relative overflow-hidden flex flex-col">
-    <div class="w-full max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 flex-grow flex items-center">
-      <!-- 2열 레이아웃: 데스크톱에서 좌우 분할, 모바일에서 상하 배치 -->
-      <div class="grid lg:grid-cols-[3fr_2fr] gap-8 w-full items-center">
-        
-        <!-- 왼쪽: 3D 모델 영역 -->
-        <div class="order-2 lg:order-1 relative animate-slide-in-left">
-          <div class="relative z-0 aspect-[4/5] w-full max-w-md mx-auto lg:max-w-lg rounded-3xl overflow-hidden shadow-2xl spline-container border border-white/20 spline-scale-container">
-            <SplineViewer
-              client:load
-              url="https://prod.spline.design/hblmvsuZDlgmNL41/scene.splinecode"
-              className="w-full h-full"
-            />
-            
-            <!-- 3D 모델 오버레이 그라데이션 -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent pointer-events-none rounded-3xl"></div>
-          </div>
-          
-          <!-- 3D 모델 장식 요소 -->
-          <div class="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-80 animate-pulse shadow-lg"></div>
-          <div class="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full opacity-60 animate-bounce shadow-lg"></div>
-        </div>
+	<!-- Hero Section -->
+	<HeroSection />
 
-        <!-- 오른쪽: 프로필 카드 영역 -->
-        <div class="order-1 lg:order-2 animate-slide-in-right flex items-center justify-center">
-          <HeroProfileCard />
-        </div>
-      </div>
-      
-      <!-- 스크롤 인디케이터 -->
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-        <div class="bg-white/80 backdrop-blur-md rounded-full p-3 shadow-lg">
-          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </section>
+	<!-- Projects Preview Section -->
+	<section class="py-20 bg-gray-50 dark:bg-black">
+		<Section size="normal">
+			<div class="text-center mb-16">
+				<div class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-6">
+					<span class="relative flex h-2 w-2">
+						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+						<span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+					</span>
+					Featured Work
+				</div>
+				<h2 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+					주요 프로젝트
+				</h2>
+				<p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+					ESG 전문성과 개발 기술을 결합한 실제 프로젝트들을 확인해보세요
+				</p>
+			</div>
 
-  <!-- Quick About Section -->
-  <section class="py-4 bg-white dark:bg-gray-800">
-    <Section size="normal">
-      <div class="text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
-          온실가스 관리 경력과 워크플로우 자동화를 추구합니다
-        </h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-400 to-blue-500 rounded-xl flex items-center justify-center text-white text-2xl">
-              🌱
-            </div>
-            <h3 class="text-xl font-semibold mb-2 dark:text-gray-100">ESG & 탄소중립</h3>
-            <p class="text-gray-600 dark:text-gray-400">지속가능한 미래를 위한 기술 솔루션 개발</p>
-          </div>
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center text-white text-2xl">
-              🚀
-            </div>
-            <h3 class="text-xl font-semibold mb-2 dark:text-gray-100">Full-stack 개발</h3>
-            <p class="text-gray-600 dark:text-gray-400">React, Python, AI를 활용한 혁신적인 솔루션</p>
-          </div>
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center text-white text-2xl">
-              💡
-            </div>
-            <h3 class="text-xl font-semibold mb-2 dark:text-gray-100">자동화 & 최적화</h3>
-            <p class="text-gray-600 dark:text-gray-400">효율적인 프로세스를 통한 가치 창출</p>
-          </div>
-        </div>
-      </div>
-    </Section>
-  </section>
+			{featuredProjects.length > 0 ? (
+				<div class="space-y-8">
+					<!-- Featured 프로젝트 레이아웃 -->
+					<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 auto-rows-min">
+						
+						<!-- 메인 Featured 프로젝트 (큰 카드) -->
+						{mainFeaturedProject && (
+							<div class="lg:col-span-8">
+								<ProjectCard 
+									project={mainFeaturedProject} 
+									variant="featured" 
+									class="h-full"
+								/>
+							</div>
+						)}
 
-  <!-- Projects Section -->
-  <section id="projects" class="py-4 bg-gray-50 dark:bg-black">
-    <Section size="normal">
-      <h2 class="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
-        주요 프로젝트
-      </h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {featuredProjects.length > 0 ? (
-          featuredProjects.map((project) => (
-            <ProjectCard project={project} variant="simple" />
-          ))
-        ) : (
-          <div class="col-span-full text-center py-12">
-            <div class="text-6xl mb-4">🚀</div>
-            <p class="text-gray-600 dark:text-gray-300 text-lg">프로젝트를 준비 중입니다.</p>
-            <p class="text-gray-500 dark:text-gray-400 mt-2">곧 멋진 프로젝트들을 공유하겠습니다!</p>
-          </div>
-        )}
-      </div>
-      {featuredProjects.length > 0 && (
-        <div class="text-center mt-12">
-          <a 
-                            href="/project" 
-            class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
-          >
-            모든 프로젝트 보기 →
-          </a>
-        </div>
-      )}
-    </Section>
-  </section>
+						<!-- 서브 Featured 프로젝트들 (작은 카드들) -->
+						{subFeaturedProjects.length > 0 && (
+							<div class="lg:col-span-4 space-y-6">
+								{subFeaturedProjects.map((project, index) => (
+									<ProjectCard 
+										project={project} 
+										variant="compact"
+										index={index}
+									/>
+								))}
+								
+								<!-- 추가 프로젝트 보기 카드 -->
+								{featuredProjects.length >= 3 && (
+									<div class="relative group">
+										<div class="aspect-[4/3] bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-green-500/10 dark:from-blue-500/20 dark:via-purple-500/20 dark:to-green-500/20 rounded-2xl border-2 border-dashed border-blue-300 dark:border-blue-600 flex flex-col items-center justify-center text-center p-6 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 cursor-pointer">
+											<div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+												<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+												</svg>
+											</div>
+											<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">더 많은 프로젝트</h3>
+											<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">다양한 프로젝트들을 확인해보세요</p>
+											<a 
+												href="/project"
+												class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium text-sm"
+											>
+												전체 보기 →
+											</a>
+										</div>
+									</div>
+								)}
+							</div>
+						)}
+					</div>
 
-  <!-- Stories Section -->
-  <section class="py-4 bg-white dark:bg-gray-800">
-    <Section size="normal">
-      <h2 class="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
-        최신 블로그
-      </h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {recentStories.length > 0 ? (
-          recentStories.map((blog) => (
-            <BlogCard blog={blog} variant="simple" />
-          ))
-        ) : (
-          <div class="col-span-full text-center py-12">
-            <div class="text-6xl mb-4">📝</div>
-            <p class="text-gray-600 dark:text-gray-300 text-lg">블로그를 준비 중입니다.</p>
-            <p class="text-gray-500 dark:text-gray-400 mt-2">흥미로운 이야기들을 곧 공유하겠습니다!</p>
-          </div>
-        )}
-      </div>
-      {recentStories.length > 0 && (
-        <div class="text-center mt-12">
-          <a 
-            href="/blog/all/page/1" 
-            class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
-          >
-            모든 블로그 보기 →
-          </a>
-        </div>
-      )}
-    </Section>
-  </section>
+					<!-- 모바일에서의 추가 프로젝트들 (lg 이상에서는 숨김) -->
+					{subFeaturedProjects.length === 0 && (
+						<div class="grid md:grid-cols-2 gap-6 lg:hidden">
+							<!-- 빈 공간 채우기용 카드들 -->
+							<div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl flex items-center justify-center">
+								<div class="text-center">
+									<div class="text-4xl mb-4">🚧</div>
+									<p class="text-gray-600 dark:text-gray-300 font-medium">새 프로젝트 준비 중</p>
+								</div>
+							</div>
+							<div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl flex items-center justify-center">
+								<div class="text-center">
+									<div class="text-4xl mb-4">💡</div>
+									<p class="text-gray-600 dark:text-gray-300 font-medium">아이디어 구상 중</p>
+								</div>
+							</div>
+						</div>
+					)}
+				</div>
+			) : (
+				<!-- 프로젝트가 없을 때 -->
+				<div class="text-center py-20">
+					<div class="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-8">
+						<svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+						</svg>
+					</div>
+					<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">흥미진진한 프로젝트를 준비 중입니다</h3>
+					<p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">ESG와 기술을 결합한 혁신적인 솔루션들을 곧 선보이겠습니다</p>
+					<div class="flex flex-col sm:flex-row gap-4 justify-center">
+						<a 
+							href="/about" 
+							class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 font-semibold"
+						>
+							더 알아보기 →
+						</a>
+						<a 
+							href="mailto:charmjinmean@gmail.com" 
+							class="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
+						>
+							프로젝트 문의하기
+						</a>
+					</div>
+				</div>
+			)}
 
-<style>
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes slideInLeft {
-    0% {
-      opacity: 0;
-      transform: translateX(-50px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  @keyframes slideInRight {
-    0% {
-      opacity: 0;
-      transform: translateX(50px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 1s ease-out;
-  }
-  
-  .animate-slide-in-left {
-    animation: slideInLeft 1s ease-out 0.2s both;
-  }
-  
-  .animate-slide-in-right {
-    animation: slideInRight 1s ease-out 0.4s both;
-  }
-  
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  /* 3D 모델 호버 효과 */
-  .spline-container:hover {
-    transform: scale(1.02);
-    transition: transform 0.3s ease;
-  }
-  
-  /* 글래스모피즘 효과 강화 */
-  .glass-effect {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-  
-  /* 3D 모델 스케일 조정 - 여러 방법 동시 적용 */
-  .spline-scaled {
-    transform: scale(0.75) !important;
-    transform-origin: center !important;
-  }
-  
-  .spline-scale-container * {
-    transform: scale(0.75) !important;
-    transform-origin: center !important;
-  }
-  
-  .spline-scale-container canvas,
-  .spline-scale-container iframe,
-  [data-spline] {
-    transform: scale(0.75) !important;
-    transform-origin: center !important;
-  }
-  
-  /* 모바일에서 더 작게 */
-  @media (max-width: 768px) {
-    .spline-scaled {
-      transform: scale(0.6) !important;
-    }
-    
-    .spline-scale-container * {
-      transform: scale(0.6) !important;
-    }
-    
-    .spline-scale-container canvas,
-    .spline-scale-container iframe,
-    [data-spline] {
-      transform: scale(0.6) !important;
-    }
-  }
-</style>
+			<!-- 전체 프로젝트 보기 버튼 (프로젝트가 있을 때만) -->
+			{featuredProjects.length > 0 && (
+				<div class="text-center mt-16">
+					<a 
+						href="/project" 
+						class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg text-lg"
+					>
+						<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+						</svg>
+						모든 프로젝트 탐험하기
+						<svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+						</svg>
+					</a>
+				</div>
+			)}
+		</Section>
+	</section>
+
+	<!-- Stories Preview Section -->
+	<section class="py-20 bg-white dark:bg-gray-800">
+		<Section size="normal">
+			<div class="text-center mb-12">
+				<div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
+					<span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+					Latest Posts
+				</div>
+				<h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+					최신 블로그
+				</h2>
+				<p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+					기술, ESG, 그리고 지속가능한 개발에 대한 인사이트를 공유합니다
+				</p>
+			</div>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+				{recentStories.length > 0 ? (
+					recentStories.map((blog) => (
+						<BlogCard blog={blog} variant="simple" />
+					))
+				) : (
+					<div class="col-span-full text-center py-12">
+						<div class="text-6xl mb-4">📝</div>
+						<p class="text-gray-600 dark:text-gray-300 text-lg">블로그를 준비 중입니다.</p>
+						<p class="text-gray-500 dark:text-gray-400 mt-2">흥미로운 이야기들을 곧 공유하겠습니다!</p>
+					</div>
+				)}
+			</div>
+			{recentStories.length > 0 && (
+				<div class="text-center mt-12">
+					<a 
+						href="/blog/all/page/1" 
+						class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
+					>
+						모든 블로그 보기 →
+					</a>
+				</div>
+			)}
+		</Section>
+	</section>
+</Layout>
