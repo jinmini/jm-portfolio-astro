@@ -3,7 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import { MobileMenuButton } from '../components/common/Header/MobileMenuButton.tsx';
 import { twMerge } from 'tailwind-merge';
 import ThemeToggleButton from '../components/common/Header/ThemeToggleButton.tsx';
-
+import { socialLinksArray } from '../data/socialLinks';
 
 export interface Props {
 	title: string;
@@ -13,24 +13,8 @@ export interface Props {
 
 const { title, description, hasHeaderBackground = false } = Astro.props;
 
-// Footer 데이터 구조화 (확장성 고려)
-const socialLinks = [
-	{
-		name: 'GitHub',
-		url: 'https://github.com/jinmini',
-		icon: 'github'
-	},
-	{
-		name: 'LinkedIn', 
-		url: 'https://linkedin.com/in/jinmin-kim',
-		icon: 'linkedin'
-	},
-	{
-		name: 'Email',
-		url: 'mailto:charmjinmean@gmail.com',
-		icon: 'email'
-	}
-];
+// 중앙 관리되는 소셜 링크 사용
+const socialLinks = socialLinksArray;
 
 const brandingMessage = {
 	line1: '지속가능한 미래를 만드는',

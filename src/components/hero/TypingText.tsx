@@ -7,11 +7,11 @@ interface TypingTextProps {
 
 export const TypingText: React.FC<TypingTextProps> = ({ 
   roles = [
-    "AI PM 🤖",
-    "Carbon Management Expert 🌱", 
-    "ESG Consultant 📊",
-    "지속가능한 미래를 설계하는 사람 🌍",
-    "기술과 환경의 가교 🌉"
+    "AI를 활용한 워크플로우 자동화를 설계합니다",
+    "Carbon Management Expert", 
+    "ESG Consultant",
+    "지속가능한 미래를 설계합니다",
+    "기술과 환경을 연결합니다"
   ],
   className = "font-semibold text-blue-600"
 }) => {
