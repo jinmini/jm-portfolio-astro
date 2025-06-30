@@ -183,6 +183,7 @@ const pageDescription = "ESG AI 전문가이자 풀스택 개발자, 김진의 �
         const slug = kpiCard.dataset.targetSlug;
         
         updateView(category);
+        window.history.pushState(null, '', `?category=${category}`);
         
         const elementToScroll = document.getElementById(`esg-item-${slug}`);
         if(elementToScroll) {
