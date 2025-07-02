@@ -382,7 +382,15 @@ const { projects } = Astro.props;
         if (item.type === 'video') {
           const thumbnailSrc = item.content.thumbnail || this.currentProject.data.thumbnail;
           thumbnail.innerHTML = `
-            <img src="${thumbnailSrc}" alt="Video thumbnail" class="w-full h-full object-cover" />
+            <img 
+              src="${thumbnailSrc}" 
+              alt="Video thumbnail" 
+              class="w-full h-full object-cover" 
+              loading="lazy"
+              decoding="async"
+              width="120"
+              height="80"
+            />
             <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
               <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z"/>
@@ -391,7 +399,15 @@ const { projects } = Astro.props;
           `;
         } else {
           thumbnail.innerHTML = `
-            <img src="${item.content}" alt="Thumbnail" class="w-full h-full object-cover" />
+            <img 
+              src="${item.content}" 
+              alt="Thumbnail" 
+              class="w-full h-full object-cover" 
+              loading="lazy"
+              decoding="async"
+              width="120"
+              height="80"
+            />
           `;
         }
         

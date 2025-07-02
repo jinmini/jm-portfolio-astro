@@ -118,4 +118,66 @@ const brandingMessage = {
 			</div>
 		</div>
 	</footer>
+	
+	<!-- 이미지 최적화 스크립트 -->
+	<script>
+		// 이미지 최적화 관련 추가 설정
+		import('../scripts/imageOptimization.ts').then(module => {
+			const imageOptimizer = module.default;
+			
+			// 페이지 변경 시 새로운 이미지들을 관찰 대상에 추가
+			const observeNewContent = () => {
+				setTimeout(() => {
+					imageOptimizer.observeNewImages();
+				}, 100);
+			};
+			
+			// MutationObserver로 동적 콘텐츠 감지
+			if ('MutationObserver' in window) {
+				const observer = new MutationObserver((mutations) => {
+					let hasNewImages = false;
+					mutations.forEach(mutation => {
+						if (mutation.type === 'childList') {
+							mutation.addedNodes.forEach(node => {
+								if (node.nodeType === 1) { // Element node
+									const element = node as Element;
+									if (element.tagName === 'IMG' || element.querySelector('img')) {
+										hasNewImages = true;
+									}
+								}
+							});
+						}
+					});
+					
+					if (hasNewImages) {
+						observeNewContent();
+					}
+				});
+				
+				observer.observe(document.body, {
+					childList: true,
+					subtree: true
+				});
+			}
+			
+			// 페이지가 완전히 로드된 후 최종 최적화
+			window.addEventListener('load', () => {
+				setTimeout(() => {
+					imageOptimizer.observeNewImages();
+				}, 500);
+			});
+		}).catch(error => {
+			console.warn('이미지 최적화 스크립트 로딩 실패:', error);
+		});
+		
+		// 성능 모니터링 스크립트 로드 (개발 환경에서만)
+		if (import.meta.env.DEV) {
+			import('../scripts/performanceMonitor.ts').then(() => {
+				console.log('📊 성능 모니터링이 활성화되었습니다.');
+				console.log('💡 getPerformanceReport() 또는 exportPerformanceData()를 콘솔에서 실행해보세요.');
+			}).catch(error => {
+				console.warn('성능 모니터링 스크립트 로딩 실패:', error);
+			});
+		}
+	</script>
 </BaseLayout>

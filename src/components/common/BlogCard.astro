@@ -15,7 +15,16 @@ const { title, description, date, category, thumbnail, tags = [] } = data;
   <!-- 이미지 영역 -->
   <div class={`relative overflow-hidden ${variant === 'detailed' ? 'aspect-[4/3]' : 'aspect-[5/3]'}`}>
     {thumbnail ? (
-      <img src={thumbnail} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+      <img 
+        src={thumbnail} 
+        alt={title} 
+        class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300 image-lazy" 
+        loading="lazy"
+        decoding="async"
+        width="400"
+        height={variant === 'detailed' ? '300' : '240'}
+        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      />
     ) : (
       <div class="w-full h-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white text-6xl">
         📖
@@ -90,4 +99,55 @@ const { title, description, date, category, thumbnail, tags = [] } = data;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-</style> 
+  
+  /* 이미지 로딩 최적화 */
+  .image-lazy {
+    background: linear-gradient(90deg, #f0f0f0 25%, transparent 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  .image-lazy.loaded {
+    animation: none;
+    background: none;
+  }
+  
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .image-lazy {
+      animation: none;
+      background: #f0f0f0;
+    }
+  }
+  
+  /* 다크모드 지원 */
+  :global(.dark) .image-lazy {
+    background: linear-gradient(90deg, #374151 25%, transparent 50%, #374151 75%);
+    background-size: 200% 100%;
+  }
+  
+  :global(.dark) .image-lazy:not(.loaded) {
+    background: #374151;
+  }
+</style>
+
+<script>
+  // 이미지 로딩 완료 시 placeholder 제거
+  document.addEventListener('DOMContentLoaded', () => {
+    const lazyImages = document.querySelectorAll('.image-lazy');
+    
+    lazyImages.forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => {
+          img.classList.add('loaded');
+        });
+      }
+    });
+  });
+</script> 
