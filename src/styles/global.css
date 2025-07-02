@@ -42,6 +42,33 @@
   .gradient-overlay {
     @apply absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100;
   }
+  
+  /* 이미지 최적화 유틸리티 */
+  .image-optimized {
+    @apply transition-all duration-300;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  .image-lazy-global {
+    background: linear-gradient(90deg, #f3f4f6 25%, transparent 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  .image-lazy-global.loaded {
+    animation: none;
+    background: none;
+  }
+  
+  .image-blur-load {
+    filter: blur(4px);
+    transition: filter 0.3s ease;
+  }
+  
+  .image-blur-load.loaded {
+    filter: blur(0);
+  }
 }
 
 /* MDX 콘텐츠 스타일링 */
@@ -195,6 +222,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 @keyframes float {
   0% {
     transform: translateY(0px);
@@ -290,6 +326,25 @@
   :root {
     --color-bg: #0f172a;
     --color-text: #f8fafc;
+  }
+  
+  /* 다크모드 이미지 placeholder */
+  .image-lazy-global {
+    background: linear-gradient(90deg, #374151 25%, transparent 50%, #374151 75%);
+    background-size: 200% 100%;
+  }
+  
+  /* 다크모드 스크롤바 */
+  ::-webkit-scrollbar-track {
+    background: #1f2937;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #4b5563;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
   }
 }
 
