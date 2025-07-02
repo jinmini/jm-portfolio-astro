@@ -26,14 +26,14 @@ const pageTitle = `${blog.data.title} - 포트폴리오`;
 <Layout title={pageTitle} hasHeaderBackground={true}>
   <Section size="narrow">
     <Responsive>
-      <div class="py-12">
+      <div class="py-8 sm:py-12">
         <!-- 뒤로가기 버튼 -->
-        <div class="mb-8">
+        <div class="mb-6 sm:mb-8">
           <a 
             href="/blog/all/page/1"
-            class="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+            class="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors text-sm sm:text-base"
           >
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
             블로그 목록으로 돌아가기
@@ -48,20 +48,20 @@ const pageTitle = `${blog.data.title} - 포트폴리오`;
   </Section>
 
   <!-- 관련 블로그 -->
-  <footer class="mt-16 py-8 border-t border-gray-200">
+  <footer class="mt-12 sm:mt-16 py-6 sm:py-8 border-t border-gray-200">
     <div class="max-w-screen-md mx-auto px-4">
       <div class="text-center">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">더 많은 블로그 보기</h2>
-        <div class="flex flex-wrap justify-center gap-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">더 많은 블로그 보기</h2>
+        <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
           <a 
             href="/blog/all/page/1"
-            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            class="px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
           >
             전체 블로그
           </a>
           <a 
             href={`/blog/${blog.data.category}/page/1`}
-            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            class="px-4 sm:px-6 py-2 sm:py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base font-medium"
           >
             {blog.data.category} 카테고리
           </a>
@@ -69,70 +69,4 @@ const pageTitle = `${blog.data.title} - 포트폴리오`;
       </div>
     </div>
   </footer>
-</Layout>
-
-<style>
-  .prose {
-    color: #374151;
-  }
-  .prose h1, .prose h2, .prose h3, .prose h4 {
-    color: #111827;
-    font-weight: 700;
-  }
-  .prose h1 {
-    font-size: 2.25rem;
-    margin-bottom: 1rem;
-    margin-top: 2rem;
-  }
-  .prose h2 {
-    font-size: 1.875rem;
-    margin-bottom: 1rem;
-    margin-top: 2rem;
-  }
-  .prose h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-    margin-top: 1.5rem;
-  }
-  .prose p {
-    margin-bottom: 1rem;
-    line-height: 1.75;
-  }
-  .prose ul, .prose ol {
-    margin-bottom: 1rem;
-    padding-left: 1.5rem;
-  }
-  .prose li {
-    margin-bottom: 0.5rem;
-  }
-  .prose strong {
-    font-weight: 600;
-    color: #111827;
-  }
-  .prose code {
-    background-color: #f3f4f6;
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-  }
-  .prose blockquote {
-    border-left: 4px solid #d1d5db;
-    padding-left: 1rem;
-    margin: 1.5rem 0;
-    font-style: italic;
-    color: #6b7280;
-  }
-  .prose pre {
-    background-color: #1f2937;
-    color: #f9fafb;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-  }
-  .prose pre code {
-    background: none;
-    padding: 0;
-    color: inherit;
-  }
-</style> 
+</Layout> 

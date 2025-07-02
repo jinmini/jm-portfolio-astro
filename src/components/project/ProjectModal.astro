@@ -9,10 +9,10 @@ interface Props {
 const { projects } = Astro.props;
 ---
 <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-  <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-7xl w-full h-[85vh] overflow-hidden shadow-2xl">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-7xl w-full max-h-[90vh] lg:h-[85vh] overflow-hidden shadow-2xl">
     <!-- 모달 헤더 -->
-    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-      <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 dark:text-white"></h2>
+    <div class="flex items-center justify-between p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <h2 id="modalTitle" class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white"></h2>
       <button 
         id="closeModal"
         class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
@@ -24,35 +24,67 @@ const { projects } = Astro.props;
       </button>
     </div>
 
-    <!-- 2컬럼 메인 컨텐츠 -->
-    <div class="flex flex-col lg:flex-row h-[calc(85vh-88px)]">
+    <!-- 모바일 탭 헤더 (lg에서 숨김) -->
+    <div id="mobileTabHeader" class="lg:hidden bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+      <div class="flex">
+        <button 
+          id="mediaTab"
+          class="flex-1 px-4 py-3 text-sm font-medium text-center transition-colors border-b-2 tab-button active"
+          data-tab="media"
+          role="tab"
+          aria-selected="true"
+          aria-controls="mediaContent"
+        >
+          <svg class="w-4 h-4 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+          미디어
+        </button>
+        <button 
+          id="infoTab"
+          class="flex-1 px-4 py-3 text-sm font-medium text-center transition-colors border-b-2 tab-button"
+          data-tab="info"
+          role="tab"
+          aria-selected="false"
+          aria-controls="infoContent"
+        >
+          <svg class="w-4 h-4 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          정보
+        </button>
+      </div>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="flex flex-col lg:flex-row h-[calc(90vh-120px)] lg:h-[calc(85vh-88px)]">
       
-      <!-- 왼쪽: 미디어 영역 (50%) -->
-      <div class="lg:w-1/2 bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <!-- 미디어 영역 -->
+      <div id="mediaContent" class="tab-content active lg:w-1/2 bg-gray-50 dark:bg-gray-900 flex flex-col">
         <!-- 메인 미디어 -->
-        <div class="flex-1 p-6">
+        <div class="flex-1 p-4 lg:p-6">
           <div class="relative h-full bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-            <div id="currentMedia" class="w-full h-full flex items-center justify-center text-6xl">
+            <div id="currentMedia" class="w-full h-full flex items-center justify-center text-4xl lg:text-6xl">
               🚀
             </div>
             
             <!-- 미디어 네비게이션 버튼 -->
             <button 
               id="prevMedia"
-              class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition-opacity hidden backdrop-blur-sm"
+              class="absolute left-2 lg:left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 lg:p-3 rounded-full hover:bg-opacity-75 transition-opacity hidden backdrop-blur-sm"
               aria-label="이전 미디어"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
               </svg>
             </button>
             
             <button 
               id="nextMedia"
-              class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition-opacity hidden backdrop-blur-sm"
+              class="absolute right-2 lg:right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 lg:p-3 rounded-full hover:bg-opacity-75 transition-opacity hidden backdrop-blur-sm"
               aria-label="다음 미디어"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </button>
@@ -60,16 +92,16 @@ const { projects } = Astro.props;
         </div>
 
         <!-- 썸네일 갤러리 -->
-        <div class="px-6 pb-6">
-          <div id="mediaIndicators" class="flex justify-center space-x-3">
+        <div class="px-4 lg:px-6 pb-4 lg:pb-6">
+          <div id="mediaIndicators" class="flex justify-center space-x-2 lg:space-x-3">
             <!-- JavaScript로 동적 생성 -->
           </div>
         </div>
       </div>
 
-      <!-- 오른쪽: 정보 영역 (50%) -->
-      <div class="lg:w-1/2 bg-white dark:bg-gray-800 flex flex-col">
-        <div class="flex-1 p-8 overflow-y-auto">
+      <!-- 정보 영역 -->
+      <div id="infoContent" class="tab-content lg:w-1/2 bg-white dark:bg-gray-800 flex flex-col">
+        <div class="flex-1 p-4 lg:p-8 overflow-y-auto">
           <div id="projectInfo">
             <!-- JavaScript로 동적 생성 -->
           </div>
@@ -98,8 +130,15 @@ const { projects } = Astro.props;
       this.nextBtn = document.getElementById('nextMedia');
       this.closeBtn = document.getElementById('closeModal');
       
+      // 탭 관련 요소들
+      this.mediaTab = document.getElementById('mediaTab');
+      this.infoTab = document.getElementById('infoTab');
+      this.mediaContent = document.getElementById('mediaContent');
+      this.infoContent = document.getElementById('infoContent');
+      
       this.currentProject = null;
       this.currentMediaIndex = 0;
+      this.activeTab = 'media'; // 기본 활성 탭
       
       this.setupEventListeners();
     }
@@ -113,14 +152,105 @@ const { projects } = Astro.props;
       
       // 키보드 이벤트
       document.addEventListener('keydown', (e) => {
+        if (!this.currentProject) return;
+        
         if (e.key === 'Escape') this.close();
         if (e.key === 'ArrowLeft') this.previousMedia();
         if (e.key === 'ArrowRight') this.nextMedia();
+        
+        // 모바일에서 탭 간 키보드 네비게이션
+        if (window.innerWidth < 1024) {
+          if (e.key === '1') this.switchTab('media');
+          if (e.key === '2') this.switchTab('info');
+        }
       });
       
       // 미디어 네비게이션
       this.prevBtn?.addEventListener('click', () => this.previousMedia());
       this.nextBtn?.addEventListener('click', () => this.nextMedia());
+      
+      // 탭 버튼 이벤트
+      this.mediaTab?.addEventListener('click', () => this.switchTab('media'));
+      this.infoTab?.addEventListener('click', () => this.switchTab('info'));
+      
+      // 터치 스와이프 이벤트 (모바일 전용)
+      this.setupSwipeGestures();
+      
+      // 화면 크기 변경 이벤트
+      window.addEventListener('resize', () => this.handleResize());
+    }
+    
+    handleResize() {
+      if (window.innerWidth >= 1024) {
+        // 데스크톱: 모든 컨텐츠 표시
+        this.mediaContent?.classList.add('active');
+        this.infoContent?.classList.add('active');
+      } else {
+        // 모바일: 현재 활성 탭만 표시
+        this.switchTab(this.activeTab);
+      }
+    }
+    
+    setupSwipeGestures() {
+      let startX = 0;
+      let startY = 0;
+      
+      this.modal?.addEventListener('touchstart', (e) => {
+        if (window.innerWidth >= 1024) return; // 데스크톱에서는 스와이프 비활성화
+        
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      });
+      
+      this.modal?.addEventListener('touchend', (e) => {
+        if (window.innerWidth >= 1024) return;
+        
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        const diffX = startX - endX;
+        const diffY = startY - endY;
+        
+        // 수평 스와이프만 처리 (세로 스크롤과 구분)
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+          if (diffX > 0) {
+            // 왼쪽으로 스와이프 -> 정보 탭
+            this.switchTab('info');
+          } else {
+            // 오른쪽으로 스와이프 -> 미디어 탭
+            this.switchTab('media');
+          }
+        }
+      });
+    }
+    
+    switchTab(tabName) {
+      // 데스크톱에서는 탭 전환하지 않음
+      if (window.innerWidth >= 1024) return;
+      
+      this.activeTab = tabName;
+      
+      // 모든 탭 버튼의 active 클래스 제거
+      this.mediaTab?.classList.remove('active');
+      this.infoTab?.classList.remove('active');
+      
+      // 모든 탭 컨텐츠의 active 클래스 제거
+      this.mediaContent?.classList.remove('active');
+      this.infoContent?.classList.remove('active');
+      
+      // ARIA 속성 초기화
+      this.mediaTab?.setAttribute('aria-selected', 'false');
+      this.infoTab?.setAttribute('aria-selected', 'false');
+      
+      // 선택된 탭 활성화
+      if (tabName === 'media') {
+        this.mediaTab?.classList.add('active');
+        this.mediaContent?.classList.add('active');
+        this.mediaTab?.setAttribute('aria-selected', 'true');
+      } else if (tabName === 'info') {
+        this.infoTab?.classList.add('active');
+        this.infoContent?.classList.add('active');
+        this.infoTab?.setAttribute('aria-selected', 'true');
+      }
     }
     
     open(projectSlug) {
@@ -129,6 +259,10 @@ const { projects } = Astro.props;
       
       this.currentProject = project;
       this.currentMediaIndex = 0;
+      this.activeTab = 'media'; // 항상 미디어 탭으로 시작
+      
+      // 초기 탭 상태 설정
+      this.switchTab('media');
       
       this.updateContent();
       this.modal?.classList.remove('hidden');
@@ -141,6 +275,7 @@ const { projects } = Astro.props;
       this.modal?.classList.remove('flex');
       document.body.style.overflow = 'auto';
       this.currentProject = null;
+      this.activeTab = 'media';
     }
     
     updateContent() {
@@ -416,7 +551,60 @@ const { projects } = Astro.props;
             </a>
           ` : ''}
         </div>
+        
+        <!-- 프로젝트 상세 내용 -->
+        ${this.currentProject.body ? `
+          <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              프로젝트 상세 설명
+            </h4>
+            <div id="projectContent" class="prose prose-lg dark:prose-invert max-w-none">
+              <!-- 마크다운 내용이 여기에 렌더링됩니다 -->
+            </div>
+          </div>
+        ` : ''}
       `;
+      
+      // 프로젝트 본문 내용이 있으면 마크다운을 HTML로 변환하여 표시
+      if (this.currentProject.body) {
+        this.renderMarkdownContent();
+      }
+    }
+    
+    async renderMarkdownContent() {
+      try {
+        // marked.js 라이브러리가 로드되어 있지 않다면 동적으로 로드
+        if (typeof marked === 'undefined') {
+          await this.loadMarkedJS();
+        }
+        
+        const contentElement = document.getElementById('projectContent');
+        if (contentElement && this.currentProject.body) {
+          // 마크다운을 HTML로 변환
+          const htmlContent = marked.parse(this.currentProject.body);
+          contentElement.innerHTML = htmlContent;
+        }
+      } catch (error) {
+        console.error('마크다운 렌더링 오류:', error);
+        // 오류 시 원본 텍스트 표시
+        const contentElement = document.getElementById('projectContent');
+        if (contentElement && this.currentProject.body) {
+          contentElement.innerHTML = `<pre class="whitespace-pre-wrap">${this.currentProject.body}</pre>`;
+        }
+      }
+    }
+    
+    async loadMarkedJS() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
     }
     
     goToMedia(index) {
@@ -451,4 +639,90 @@ const { projects } = Astro.props;
   const modal = new ProjectModal();
   window.openProjectModal = (slug) => modal.open(slug);
   window.closeProjectModal = () => modal.close();
-</script> 
+</script>
+
+<style>
+  /* 탭 버튼 스타일 */
+  .tab-button {
+    @apply text-gray-500 dark:text-gray-400 border-transparent;
+    touch-action: manipulation; /* 터치 지연 제거 */
+    -webkit-tap-highlight-color: transparent; /* iOS 탭 하이라이트 제거 */
+  }
+  
+  .tab-button.active {
+    @apply text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 bg-white dark:bg-gray-800;
+  }
+  
+  .tab-button:hover:not(.active) {
+    @apply text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-500;
+  }
+  
+  /* 모바일 터치 피드백 */
+  @media (max-width: 1023px) {
+    .tab-button:active {
+      @apply bg-gray-100 dark:bg-gray-600 scale-95;
+      transition: all 0.1s ease;
+    }
+    
+    .tab-button.active:active {
+      @apply bg-gray-100 dark:bg-gray-700 scale-95;
+    }
+  }
+
+  /* 모바일 탭 컨텐츠 제어 */
+  @media (max-width: 1023px) {
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: flex;
+    }
+  }
+  
+  /* 데스크톱에서는 모든 컨텐츠 표시 */
+  @media (min-width: 1024px) {
+    .tab-content {
+      display: flex !important;
+    }
+  }
+
+  /* 모달 애니메이션 */
+  #projectModal {
+    animation: modalFadeIn 0.3s ease-out;
+  }
+  
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* 탭 전환 애니메이션 */
+  .tab-content {
+    transition: opacity 0.2s ease-in-out;
+  }
+  
+  /* 스크롤바 스타일링 */
+  #projectInfo::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  #projectInfo::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  #projectInfo::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+  }
+  
+  #projectInfo::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 163, 175, 0.7);
+  }
+</style> 

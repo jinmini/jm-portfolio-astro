@@ -56,6 +56,7 @@ const esgCollection = defineCollection({
     role: z.string().optional(),
     techStack: z.array(z.string()).optional(),
     achievements: z.array(z.string()).optional(),
+    description: z.string().optional(),
   }),
 });
 

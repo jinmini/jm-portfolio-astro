@@ -36,19 +36,14 @@ const kpiItems = sortedForKpi.map(entry => {
 });
 
 // 4. 타임라인 카드용 데이터 준비 (중요: 모든 데이터를 렌더링하도록 필터링 제거)
-const timelineItems = (await Promise.all(
-  [...esgEntries] // 원본 배열 수정을 피하기 위해 복사본 사용
-    .sort((a, b) => parseInt(b.data.year) - parseInt(a.data.year))
-    .map(async (item) => {
-      const rendered = await item.render();
-      return { ...item, rendered };
-    })
-)).map(item => ({
-  ...item.data,
-  id: item.id,
-  slug: item.slug,
-  description: item.rendered.html,
-}));
+const timelineItems = [...esgEntries] // 원본 배열 수정을 피하기 위해 복사본 사용
+  .sort((a, b) => parseInt(b.data.year) - parseInt(a.data.year))
+  .map(item => ({
+    ...item.data,
+    id: item.id,
+    slug: item.slug,
+    description: item.body, // 마크다운 본문을 description으로 사용
+  }));
 
 
 const pageTitle = "About | Jinmini";
@@ -110,7 +105,8 @@ const pageDescription = "ESG AI 전문가이자 풀스택 개발자, 김진의 �
 
         <div id="timeline-view" class:list={["w-full justify-center", { "hidden": activeCategory === 'all' }]}>
           <div class="relative w-full max-w-3xl mx-auto">
-            <div class="absolute left-[66px] top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+            <!-- 반응형 수직 타임라인 -->
+            <div class="absolute left-[32px] sm:left-[48px] lg:left-[66px] top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
             {timelineItems.map((item, index) => (
               <TimelineCard item={item} index={index} />
             ))}
