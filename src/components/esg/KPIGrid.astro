@@ -1,5 +1,6 @@
+---
 import { getCollection } from 'astro:content';
-import KPICard from './KPICard';
+import KPICard from './KPICard.astro';
 
 const esgEntries = await getCollection('esg');
 
@@ -33,9 +34,10 @@ const kpiItems = sortedEntries.map(entry => {
     slug: entry.slug,
   };
 });
+---
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-4 gap-4 md:gap-6 auto-rows-[240px] [grid-auto-flow:dense]">
   {kpiItems.slice(0, 12).map(item => (
-    <KPICard client:load item={item} />
+    <KPICard item={item} />
   ))}
 </div> 

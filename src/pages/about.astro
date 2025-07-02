@@ -1,51 +1,205 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import MainGridLayout from '@layouts/MainGridLayout.astro';
 import AboutMe from '@components/about/AboutMe.astro';
 import HeroProfileCard from '@components/hero/HeroProfileCard.astro';
-import ESGTimeline from '@components/esg/ESGTimeline.tsx';
 import Section from '@components/common/Section.astro';
-import AboutMarkdownRenderer from '@components/about/AboutMarkdownRenderer.astro';
+import CategoryTabs from '@components/esg/CategoryTabs.astro';
+import KPICard from '@components/esg/KPICard.astro';
+import TimelineCard from '@components/esg/TimelineCard.astro';
 
-const esgEntries = await getCollection('esg');
+// 1. URL에서 활성 카테고리 가져오기
+const activeCategory = (Astro.url.searchParams.get('category') as 'all' | 'E' | 'S' | 'G') || 'all';
 
-// ESGTimeline 컴포넌트에 전달할 수 있도록 데이터 가공
-const items = esgEntries.map(entry => ({
-  id: entry.id,
-  slug: entry.slug,
-  body: entry.body, // Markdown 본문을 HTML로 변환한 값
-  data: entry.data,
-}));
+// 2. 모든 ESG 데이터 가져오기
+const esgEntries = await getCollection('esg', ({ data }) => {
+  return new Date(data.period.split(' ')[0]) <= new Date();
+});
+
+// 3. KPI 카드용 데이터 준비
+const specialEmphasisSlugs = ['e1', 'e3', 'g1', 's3'];
+const sortedForKpi = [...esgEntries].sort((a, b) => { // 원본 배열 수정을 피하기 위해 복사본 사용
+    if (a.data.year !== b.data.year) {
+        return parseInt(b.data.year) - parseInt(a.data.year);
+    }
+    return a.slug.localeCompare(b.slug);
+});
+
+let highEmphasisCounter = 0;
+const kpiItems = sortedForKpi.map(entry => {
+  let emphasis: 'extra-high' | 'high' | 'normal' = 'normal';
+  if (specialEmphasisSlugs.includes(entry.slug)) {
+    emphasis = highEmphasisCounter < 2 ? 'extra-high' : 'high';
+    highEmphasisCounter++;
+  }
+  return { ...entry.data, slug: entry.slug, emphasis };
+});
+
+// 4. 타임라인 카드용 데이터 준비 (중요: 모든 데이터를 렌더링하도록 필터링 제거)
+const timelineItems = [...esgEntries] // 원본 배열 수정을 피하기 위해 복사본 사용
+  .sort((a, b) => parseInt(b.data.year) - parseInt(a.data.year))
+  .map(item => ({
+    ...item.data,
+    id: item.id,
+    slug: item.slug,
+    description: item.body, // 마크다운 본문을 description으로 사용
+  }));
+
 
 const pageTitle = "About | Jinmini";
 const pageDescription = "ESG AI 전문가이자 풀스택 개발자, 김진의 소개 페이지입니다. 환경, 사회, 지배구조(ESG) 영역에서의 전문성과 AI 기술을 결합하여 지속가능한 솔루션을 만듭니다.";
 ---
 
 <MainGridLayout title={pageTitle} description={pageDescription}>
-  <Section>
-    <!-- 프로필 카드와 AboutMe를 가로로 배치 -->
-    <div
-      class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start pt-8"
-    >
-      <!-- 왼쪽: 프로필 카드 -->
-      <div class="flex-shrink-0 lg:w-1/3">
-        <HeroProfileCard isAboutPage={true} />
-      </div>
-      
-      <!-- 오른쪽: AboutMe -->
-      <div class="flex-1">
-        <AboutMe />
+  <Section size="wide">
+    <!-- 헤더 섹션 -->
+    <div class="text-center mb-12 lg:mb-16">
+      <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+        🌱 ESG AI 전문가, 김진민
+      </h1>
+      <p class="text-lg lg:text-xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl mx-auto">
+        지속가능한 미래를 위한 <span class="text-blue-600 dark:text-blue-400 font-semibold">AI 기반 탄소중립 솔루션</span>을 설계하고 개발합니다.
+        <br class="hidden lg:block">
+        환경(E), 사회(S), 지배구조(G) 영역에서 <span class="text-green-600 dark:text-green-400 font-semibold">기술과 지속가능성의 조화</span>를 추구합니다.
+      </p>
+    </div>
+
+    <!-- 프로필 카드와 AboutMe를 가로로 배치 (컨테이너 중앙 정렬) -->
+    <div class="mb-16">
+      <div class="w-fit mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start">
+        <!-- 왼쪽: 프로필 카드 -->
+        <div class="w-full max-w-sm flex-shrink-0">
+          <HeroProfileCard isAboutPage={true} />
+        </div>
+        
+        <!-- 오른쪽: AboutMe -->
+        <div class="w-full lg:max-w-2xl">
+          <AboutMe />
+        </div>
       </div>
     </div>
-    
-    <div class="pt-8">
-      <div class="w-full mx-auto">
-        <AboutMarkdownRenderer>
-          <ESGTimeline client:load items={items} />
-        </AboutMarkdownRenderer>
+  
+    <!-- ESG 타임라인 섹션 -->
+    <div class="w-full mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center justify-center gap-3">
+          <span class="text-4xl">🌟</span>
+          ESG 활동 연혁
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 text-lg">
+          환경(E), 사회(S), 지배구조(G) 각 영역에서의 전문적인 프로젝트와 성과
+        </p>
+      </div>
+
+      <CategoryTabs />
+
+      <!-- 중요: 항상 두 컨테이너를 모두 렌더링하고, hidden 클래스로 초기 가시성 제어 -->
+      <div id="esg-content-container">
+        <div id="kpi-grid" class:list={["w-full max-w-3xl mx-auto", { "hidden": activeCategory !== 'all' }]}>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-4 gap-4 md:gap-6 auto-rows-[240px] [grid-auto-flow:dense]">
+            {kpiItems.slice(0, 12).map(item => (
+              <KPICard item={item} />
+            ))}
+          </div>
+        </div>
+
+        <div id="timeline-view" class:list={["w-full justify-center", { "hidden": activeCategory === 'all' }]}>
+          <div class="relative w-full max-w-3xl mx-auto">
+            <!-- 반응형 수직 타임라인 -->
+            <div class="absolute left-[32px] sm:left-[48px] lg:left-[66px] top-0 bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+            {timelineItems.map((item, index) => (
+              <TimelineCard item={item} index={index} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   </Section>
 </MainGridLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabsContainer = document.getElementById('category-tabs');
+    const kpiGrid = document.getElementById('kpi-grid');
+    const timelineView = document.getElementById('timeline-view');
+    const allTimelineCards = Array.from(document.querySelectorAll('.timeline-card')) as HTMLElement[];
+
+    function updateView(activeCategory) {
+      // Update Tabs
+      tabsContainer.querySelectorAll('button').forEach(button => {
+        const isCurrent = button.dataset.category === activeCategory;
+        button.setAttribute('aria-current', isCurrent ? 'page' : 'false');
+        
+        const activeClass = 'bg-slate-800 dark:bg-blue-600 text-white border-slate-800 dark:border-blue-600';
+        const inactiveClass = 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-600';
+
+        if(isCurrent) {
+            button.classList.add(...activeClass.split(' '));
+            button.classList.remove(...inactiveClass.split(' '));
+        } else {
+            button.classList.add(...inactiveClass.split(' '));
+            button.classList.remove(...activeClass.split(' '));
+        }
+      });
+
+      // Update Content Visibility
+      if (activeCategory === 'all') {
+        kpiGrid?.classList.remove('hidden');
+        timelineView?.classList.add('hidden');
+      } else {
+        kpiGrid?.classList.add('hidden');
+        timelineView?.classList.remove('hidden');
+
+        // Filter Timeline Cards
+        allTimelineCards.forEach(card => {
+          if (card.dataset.category === activeCategory) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+    }
+
+    tabsContainer.addEventListener('click', (e) => {
+      const target = (e.target as HTMLElement).closest('button');
+      if (target) {
+        e.preventDefault();
+        const category = target.dataset.category;
+        updateView(category);
+        window.history.pushState(null, '', `?category=${category}`);
+      }
+    });
+
+    document.getElementById('esg-content-container').addEventListener('click', (e) => {
+      const kpiCard = (e.target as HTMLElement).closest('.kpi-card');
+      if (kpiCard) {
+        e.preventDefault();
+        const category = kpiCard.dataset.targetCategory;
+        const slug = kpiCard.dataset.targetSlug;
+        
+        updateView(category);
+        window.history.pushState(null, '', `?category=${category}`);
+        
+        const elementToScroll = document.getElementById(`esg-item-${slug}`);
+        if(elementToScroll) {
+            elementToScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    });
+
+    // Initial load
+    const initialCategory = new URLSearchParams(window.location.search).get('category') || 'all';
+    updateView(initialCategory);
+
+    // Initial scroll for direct anchor links
+    if(window.location.hash) {
+      const elementToScroll = document.querySelector(window.location.hash);
+      if(elementToScroll) {
+          elementToScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });
+</script>
 
 

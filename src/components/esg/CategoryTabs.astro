@@ -1,0 +1,38 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+type Tab = 'all' | 'E' | 'S' | 'G';
+
+const TABS: { id: Tab; label: string; icon?: string }[] = [
+  { id: 'all', label: 'KPI' },
+  { id: 'E', label: 'Environment', icon: '🌱' },
+  { id: 'S', label: 'Social', icon: '👥' },
+  { id: 'G', label: 'Governance', icon: '🏛️' },
+];
+
+const activeTab = (Astro.url.searchParams.get('category') as Tab) || 'all';
+
+function getTabClass(tabId: Tab, currentTab: Tab) {
+  const baseClass = "px-6 py-3 border-2 rounded-full text-sm font-medium cursor-pointer transition-all duration-300 flex items-center gap-2";
+  
+  const activeClass = 'bg-slate-800 dark:bg-blue-600 text-white border-slate-800 dark:border-blue-600';
+  const inactiveClass = 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-600';
+
+  const isActive = currentTab === tabId;
+  return twMerge(baseClass, isActive ? activeClass : inactiveClass);
+}
+---
+
+<div class="flex justify-center gap-2 mb-12 flex-wrap" id="category-tabs">
+  {TABS.map((tab) => (
+    <button
+      type="button"
+      data-category={tab.id}
+      class={getTabClass(tab.id, activeTab)}
+      aria-current={activeTab === tab.id ? 'page' : 'false'}
+    >
+      {tab.icon && <span class="text-lg">{tab.icon}</span>}
+      {tab.label}
+    </button>
+  ))}
+</div> 

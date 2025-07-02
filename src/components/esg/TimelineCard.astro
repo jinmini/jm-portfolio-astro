@@ -1,0 +1,153 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { remark } from 'remark';
+import html from 'remark-html';
+
+type TimelineItem = {
+  id: string;
+  slug: string;
+  description: string;
+} & CollectionEntry<'esg'>['data'];
+
+
+interface Props {
+  item: TimelineItem;
+  index: number;
+}
+
+const { item, index } = Astro.props;
+
+// 마크다운을 HTML로 변환
+const processedDescription = await remark().use(html).process(item.description);
+const descriptionHtml = processedDescription.toString();
+
+const getCategoryIcon = (category: string) => {
+  if (category === 'E') return '🌱';
+  if (category === 'S') return '👥';
+  if (category === 'G') return '🏛️';
+  return '';
+};
+---
+
+<div
+  id={`esg-item-${item.slug}`}
+  data-category={item.category}
+  class="timeline-card relative pl-8 sm:pl-16 lg:pl-[120px] mb-8 sm:mb-12 lg:mb-16 flex-col items-start opacity-0 animate-fade-in-up"
+  style={{ animationDelay: `${(index + 1) * 0.1}s` }}
+>
+  <!-- 모바일: 연도를 카드 상단에 표시 -->
+  <div class="block sm:hidden w-full mb-3">
+    <div class="flex items-center gap-3">
+      <span class="text-xl font-bold text-sky-500 dark:text-blue-400">
+        {item.year}
+      </span>
+      <div class="flex-1 h-px bg-slate-200 dark:bg-slate-600"></div>
+      <span class="text-xs font-semibold flex items-center gap-1 text-sky-600 dark:text-blue-400">
+        {getCategoryIcon(item.category)} {item.category}
+      </span>
+    </div>
+  </div>
+
+  <!-- 데스크톱: 기존 연도 표시 -->
+  <div class="hidden sm:block absolute left-0 top-0 w-12 sm:w-16 lg:w-20 text-lg sm:text-xl lg:text-2xl font-bold text-sky-500 dark:text-blue-400 text-right pr-3 sm:pr-4 lg:pr-5">
+    {item.year}
+  </div>
+
+  <!-- 타임라인 점 - 반응형 위치 조정 -->
+  <div
+    class="absolute w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-sky-500 z-10 shadow-[0_0_0_3px_white] dark:shadow-[0_0_0_3px_#0f172a]"
+    style={{ left: '24px', top: '8px' }}
+    class:list={[
+      "sm:left-[40px] lg:left-[56px]",
+      "sm:top-[8px]"
+    ]}
+  ></div>
+
+  <details class="group w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl sm:rounded-2xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-sky-500 flex flex-col overflow-hidden">
+    <summary class="list-none cursor-pointer focus-visible:outline-none">
+      <div class="p-4 sm:p-5 lg:p-6 flex flex-col min-h-[200px] sm:min-h-[240px] lg:min-h-[279px]">
+        <!-- 모바일에서는 카테고리 숨김 (상단에서 이미 표시) -->
+        <div class="hidden sm:flex justify-between items-start mb-3 gap-4">
+          <div class="text-sm text-slate-600 dark:text-slate-400 font-medium">{item.period}</div>
+          <div class="text-sm font-semibold flex items-center gap-1 text-sky-600 dark:text-blue-400">
+            {getCategoryIcon(item.category)} {item.category}
+          </div>
+        </div>
+
+        <!-- 모바일에서는 기간만 표시 -->
+        <div class="block sm:hidden mb-3">
+          <div class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">{item.period}</div>
+        </div>
+
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight mb-3 line-clamp-2">
+          {item.title}
+        </h3>
+
+        <div class:list={["text-slate-600 dark:text-slate-400 leading-relaxed mb-3 text-xs sm:text-sm overflow-hidden", "group-open:line-clamp-none line-clamp-3"]}>
+          <Fragment set:html={descriptionHtml} />
+        </div>
+
+        {item.impact && (
+          <div class="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-2xl sm:rounded-3xl text-xs text-sky-900 dark:text-blue-400 font-semibold mb-3 self-start">
+            <span class="text-xs sm:text-sm">📊</span>
+            <span class="line-clamp-1 text-xs sm:text-xs">{item.impact}</span>
+          </div>
+        )}
+
+        {item.isHighlight && (
+          <div class="mt-auto">
+            <span class="text-sky-600 dark:text-blue-400 hover:text-sky-800 dark:hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors">
+              <span class="group-open:hidden">자세히 보기 ▼</span>
+              <span class="hidden group-open:inline">간략히 보기 ▲</span>
+            </span>
+          </div>
+        )}
+      </div>
+    </summary>
+
+    {item.isHighlight && (
+      <div class="px-4 sm:px-5 lg:px-6 pb-4 sm:pb-5 lg:pb-6">
+        <div class="p-3 sm:p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
+          {item.role && (
+            <div class="mb-3">
+              <strong class="text-slate-900 dark:text-slate-100 text-sm">역할:</strong>
+              <span class="text-slate-600 dark:text-slate-300 ml-2 text-xs sm:text-sm">{item.role}</span>
+            </div>
+          )}
+
+          {item.techStack && (
+            <div class="mb-3">
+              <strong class="text-slate-900 dark:text-slate-100 text-sm">기술 스택:</strong>
+              <div class="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
+                {item.techStack.map((tech: string) => (
+                  <span
+                    class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {item.achievements && (
+            <div>
+              <strong class="text-slate-900 dark:text-slate-100 text-sm">주요 성과:</strong>
+              <ul class="list-disc pl-4 sm:pl-5 mt-2 text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
+                {item.achievements.map((achievement: string) => (
+                  <li set:html={achievement}></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </details>
+</div>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style> 

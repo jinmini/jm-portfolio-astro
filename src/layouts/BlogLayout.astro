@@ -5,16 +5,16 @@ type Props = CollectionEntry<'blog'>['data'];
 
 const { title, date, category, thumbnail } = Astro.props;
 ---
-<header class="mb-12">
+<header class="mb-8 sm:mb-12">
   <!-- 타이틀 -->
-  <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+  <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
     {title}
   </h1>
 
   <!-- 메타 정보 (날짜와 카테고리) -->
-  <div class="flex flex-wrap items-center gap-6 mb-8">
-    <div class="flex items-center text-gray-600">
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
+    <div class="flex items-center text-gray-600 text-sm sm:text-base">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
       </svg>
       {date.toLocaleDateString('ko-KR')}
@@ -28,7 +28,7 @@ const { title, date, category, thumbnail } = Astro.props;
 
   <!-- 썸네일 이미지 -->
   {thumbnail && (
-    <div class="relative rounded-2xl overflow-hidden shadow-lg">
+    <div class="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
       <img 
         src={thumbnail} 
         alt={title}
@@ -39,7 +39,7 @@ const { title, date, category, thumbnail } = Astro.props;
 </header>
 
 <!-- 스토리 상세 내용 -->
-<article class="prose prose-lg max-w-none">
+<article class="prose prose-sm sm:prose-lg max-w-none">
   <slot />
 </article>
 
@@ -47,46 +47,58 @@ const { title, date, category, thumbnail } = Astro.props;
   .prose {
     color: #374151;
   }
+  
   .prose h1, .prose h2, .prose h3, .prose h4 {
     color: #111827;
     font-weight: 700;
+    line-height: 1.3;
   }
+  
   .prose h1 {
     font-size: 2.25rem;
     margin-bottom: 1rem;
     margin-top: 2rem;
   }
+  
   .prose h2 {
     font-size: 1.875rem;
     margin-bottom: 1rem;
     margin-top: 2rem;
   }
+  
   .prose h3 {
     font-size: 1.5rem;
     margin-bottom: 0.75rem;
     margin-top: 1.5rem;
   }
+  
   .prose p {
     margin-bottom: 1rem;
     line-height: 1.75;
   }
+  
   .prose ul, .prose ol {
     margin-bottom: 1rem;
     padding-left: 1.5rem;
   }
+  
   .prose li {
     margin-bottom: 0.5rem;
   }
+  
   .prose strong {
     font-weight: 600;
     color: #111827;
   }
+  
   .prose code {
     background-color: #f3f4f6;
     padding: 0.125rem 0.25rem;
     border-radius: 0.25rem;
     font-size: 0.875rem;
+    word-break: break-word;
   }
+  
   .prose blockquote {
     border-left: 4px solid #d1d5db;
     padding-left: 1rem;
@@ -94,6 +106,7 @@ const { title, date, category, thumbnail } = Astro.props;
     font-style: italic;
     color: #6b7280;
   }
+  
   .prose pre {
     background-color: #1f2937;
     color: #f9fafb;
@@ -101,26 +114,85 @@ const { title, date, category, thumbnail } = Astro.props;
     border-radius: 0.5rem;
     overflow-x: auto;
     margin: 1.5rem 0;
+    font-size: 0.875rem;
   }
+  
   .prose pre code {
     background: none;
     padding: 0;
     color: inherit;
+    font-size: inherit;
   }
 
-  /* Responsive typography for smaller screens */
+  /* 모바일 최적화 (640px 이하) */
   @media (max-width: 640px) {
     .prose h1 {
-      font-size: 1.875rem; /* 30px */
+      font-size: 1.75rem; /* 28px */
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
     }
+    
     .prose h2 {
       font-size: 1.5rem; /* 24px */
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
     }
+    
     .prose h3 {
       font-size: 1.25rem; /* 20px */
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
     }
+    
     .prose p {
       font-size: 0.95rem;
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+    
+    .prose ul, .prose ol {
+      padding-left: 1rem; /* 모바일에서 들여쓰기 줄임 */
+    }
+    
+    .prose li {
+      margin-bottom: 0.25rem;
+    }
+    
+    .prose code {
+      font-size: 0.8rem;
+      padding: 0.1rem 0.2rem;
+    }
+    
+    .prose blockquote {
+      margin: 1rem 0; /* 모바일에서 여백 줄임 */
+      padding-left: 0.75rem;
+      font-size: 0.9rem;
+    }
+    
+    .prose pre {
+      padding: 0.75rem;
+      margin: 1rem 0;
+      border-radius: 0.375rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  /* 태블릿 최적화 (641px - 768px) */
+  @media (min-width: 641px) and (max-width: 768px) {
+    .prose h1 {
+      font-size: 2rem;
+    }
+    
+    .prose h2 {
+      font-size: 1.75rem;
+    }
+    
+    .prose h3 {
+      font-size: 1.375rem;
+    }
+    
+    .prose p {
+      font-size: 1rem;
     }
   }
 </style> 

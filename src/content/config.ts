@@ -18,7 +18,21 @@ const baseContentSchema = z.object({
 // Project 컬렉션 (프로젝트)
 const project = defineCollection({
   type: 'content',
-  schema: baseContentSchema,
+  schema: baseContentSchema.extend({
+    video: z.object({
+      url: z.string(),
+      thumbnail: z.string().optional(),
+      autoplay: z.boolean().default(false),
+      loop: z.boolean().default(true),
+    }).optional(),
+    features: z.array(z.string()).optional(),
+    impact: z.object({
+      users: z.string().optional(),
+      companies: z.string().optional(),
+      improvement: z.string().optional(),
+      cost_saving: z.string().optional(),
+    }).optional(),
+  }),
 });
 
 // Story 컬렉션 (블로그) - category enum 추가
@@ -42,6 +56,7 @@ const esgCollection = defineCollection({
     role: z.string().optional(),
     techStack: z.array(z.string()).optional(),
     achievements: z.array(z.string()).optional(),
+    description: z.string().optional(),
   }),
 });
 
