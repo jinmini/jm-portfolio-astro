@@ -1,0 +1,138 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// 기술 스택 데이터 정의
+const techStacks = {
+  row1: [
+    { name: 'Python', icon: 'simple-icons:python', color: 'text-blue-500' },
+    { name: 'JavaScript', icon: 'simple-icons:javascript', color: 'text-yellow-500' },
+    { name: 'React', icon: 'simple-icons:react', color: 'text-cyan-500' },
+    { name: 'Astro', icon: 'simple-icons:astro', color: 'text-orange-500' },
+    { name: 'Next.js', icon: 'simple-icons:nextdotjs', color: 'text-black dark:text-white' },
+    { name: 'Docker', icon: 'simple-icons:docker', color: 'text-blue-600' },
+    { name: 'Kubernetes', icon: 'simple-icons:kubernetes', color: 'text-blue-700' },
+    { name: 'AWS', icon: 'simple-icons:amazonwebservices', color: 'text-orange-600' },
+    { name: 'n8n', icon: 'simple-icons:n8n', color: 'text-purple-600' },
+    { name: 'Make', icon: 'simple-icons:integromat', color: 'text-indigo-600' }
+  ],
+  row2: [
+    { name: 'Supabase', icon: 'simple-icons:supabase', color: 'text-green-600' },
+    { name: 'Langchain', icon: 'simple-icons:langchain', color: 'text-teal-600' },
+    { name: 'Notion', icon: 'simple-icons:notion', color: 'text-gray-800 dark:text-white' },
+    { name: 'Obsidian', icon: 'simple-icons:obsidian', color: 'text-purple-700' },
+    { name: 'Slack', icon: 'simple-icons:slack', color: 'text-red-500' },
+    { name: 'ChatGPT', icon: 'simple-icons:openai', color: 'text-green-500' },
+    { name: 'Claude', icon: 'simple-icons:anthropic', color: 'text-orange-700' },
+    { name: 'Gemini', icon: 'simple-icons:googlegemini', color: 'text-blue-400' },
+    { name: 'Perplexity', icon: 'simple-icons:perplexity', color: 'text-teal-500' }
+  ]
+};
+---
+
+<!-- 기술 스택 무한 스크롤 -->
+<div class="relative overflow-x-hidden py-6">
+  <!-- 첫 번째 줄: 좌→우 -->
+  <div class="flex animate-scroll-left mb-4">
+    <!-- 첫 번째 세트 -->
+    <div class="flex space-x-6 flex-shrink-0">
+      {techStacks.row1.map((tech) => (
+        <div class="flex items-center space-x-3 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300">
+          <Icon 
+            name={tech.icon} 
+            class={`w-6 h-6 ${tech.color}`}
+          />
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            {tech.name}
+          </span>
+        </div>
+      ))}
+    </div>
+    <!-- 반복을 위한 두 번째 세트 -->
+    <div class="flex space-x-6 flex-shrink-0">
+      {techStacks.row1.map((tech) => (
+        <div class="flex items-center space-x-3 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300">
+          <Icon 
+            name={tech.icon} 
+            class={`w-6 h-6 ${tech.color}`}
+          />
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            {tech.name}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- 두 번째 줄: 우→좌 -->
+  <div class="flex animate-scroll-right">
+    <!-- 첫 번째 세트 -->
+    <div class="flex space-x-6 flex-shrink-0">
+      {techStacks.row2.map((tech) => (
+        <div class="flex items-center space-x-3 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300">
+          <Icon 
+            name={tech.icon} 
+            class={`w-6 h-6 ${tech.color}`}
+          />
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            {tech.name}
+          </span>
+        </div>
+      ))}
+    </div>
+    <!-- 반복을 위한 두 번째 세트 -->
+    <div class="flex space-x-6 flex-shrink-0">
+      {techStacks.row2.map((tech) => (
+        <div class="flex items-center space-x-3 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/30 dark:border-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300">
+          <Icon 
+            name={tech.icon} 
+            class={`w-6 h-6 ${tech.color}`}
+          />
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            {tech.name}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* 기술 스택 무한 스크롤 애니메이션 */
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes scroll-right {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .animate-scroll-left {
+    animation: scroll-left 15s linear infinite;
+  }
+
+  .animate-scroll-right {
+    animation: scroll-right 15s linear infinite;
+  }
+
+  /* 모바일에서 기술 스택 애니메이션 속도 조정 */
+  @media (max-width: 640px) {
+    .animate-scroll-left {
+      animation: scroll-left 15s linear infinite;
+    }
+
+    .animate-scroll-right {
+      animation: scroll-right 15s linear infinite;
+    }
+  }
+</style> 
+</style> 

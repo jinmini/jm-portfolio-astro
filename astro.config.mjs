@@ -5,6 +5,7 @@ import rehypeSlug from 'rehype-slug';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import tailwind from '@astrojs/tailwind';
+import icon from 'astro-icon';
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,7 +16,8 @@ export default defineConfig({
     mdx({
       rehypePlugins: [rehypeSlug],
     }),
-    tailwind()
+    tailwind(),
+    icon()
   ],
 
   markdown: {
