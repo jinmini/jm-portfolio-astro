@@ -119,542 +119,560 @@ const { projects } = Astro.props;
 
 <!-- 모달 제어 스크립트 -->
 <script>
-  class ProjectModal {
-    constructor() {
-      this.modal = document.getElementById('projectModal');
-      this.modalTitle = document.getElementById('modalTitle');
-      this.currentMedia = document.getElementById('currentMedia');
-      this.mediaIndicators = document.getElementById('mediaIndicators');
-      this.projectInfo = document.getElementById('projectInfo');
-      this.prevBtn = document.getElementById('prevMedia');
-      this.nextBtn = document.getElementById('nextMedia');
-      this.closeBtn = document.getElementById('closeModal');
-      
-      // 탭 관련 요소들
-      this.mediaTab = document.getElementById('mediaTab');
-      this.infoTab = document.getElementById('infoTab');
-      this.mediaContent = document.getElementById('mediaContent');
-      this.infoContent = document.getElementById('infoContent');
-      
-      this.currentProject = null;
-      this.currentMediaIndex = 0;
-      this.activeTab = 'media'; // 기본 활성 탭
-      
-      this.setupEventListeners();
-    }
-    
-    setupEventListeners() {
-      // 모달 닫기
-      this.closeBtn?.addEventListener('click', () => this.close());
-      this.modal?.addEventListener('click', (e) => {
-        if (e.target === this.modal) this.close();
-      });
-      
-      // 키보드 이벤트
-      document.addEventListener('keydown', (e) => {
-        if (!this.currentProject) return;
+  let isModalInitialized = false;
+
+  function initializeProjectModal() {
+    // 이미 초기화되었다면 중복 실행 방지
+    if (isModalInitialized) return;
+
+    class ProjectModal {
+      constructor() {
+        this.modal = document.getElementById('projectModal');
+        // modal이 없으면 초기화 중단 (다른 페이지일 경우)
+        if (!this.modal) return;
+
+        this.modalTitle = document.getElementById('modalTitle');
+        this.currentMedia = document.getElementById('currentMedia');
+        this.mediaIndicators = document.getElementById('mediaIndicators');
+        this.projectInfo = document.getElementById('projectInfo');
+        this.prevBtn = document.getElementById('prevMedia');
+        this.nextBtn = document.getElementById('nextMedia');
+        this.closeBtn = document.getElementById('closeModal');
         
-        if (e.key === 'Escape') this.close();
-        if (e.key === 'ArrowLeft') this.previousMedia();
-        if (e.key === 'ArrowRight') this.nextMedia();
+        // 탭 관련 요소들
+        this.mediaTab = document.getElementById('mediaTab');
+        this.infoTab = document.getElementById('infoTab');
+        this.mediaContent = document.getElementById('mediaContent');
+        this.infoContent = document.getElementById('infoContent');
         
-        // 모바일에서 탭 간 키보드 네비게이션
-        if (window.innerWidth < 1024) {
-          if (e.key === '1') this.switchTab('media');
-          if (e.key === '2') this.switchTab('info');
-        }
-      });
-      
-      // 미디어 네비게이션
-      this.prevBtn?.addEventListener('click', () => this.previousMedia());
-      this.nextBtn?.addEventListener('click', () => this.nextMedia());
-      
-      // 탭 버튼 이벤트
-      this.mediaTab?.addEventListener('click', () => this.switchTab('media'));
-      this.infoTab?.addEventListener('click', () => this.switchTab('info'));
-      
-      // 터치 스와이프 이벤트 (모바일 전용)
-      this.setupSwipeGestures();
-      
-      // 화면 크기 변경 이벤트
-      window.addEventListener('resize', () => this.handleResize());
-    }
-    
-    handleResize() {
-      if (window.innerWidth >= 1024) {
-        // 데스크톱: 모든 컨텐츠 표시
-        this.mediaContent?.classList.add('active');
-        this.infoContent?.classList.add('active');
-      } else {
-        // 모바일: 현재 활성 탭만 표시
-        this.switchTab(this.activeTab);
+        this.currentProject = null;
+        this.currentMediaIndex = 0;
+        this.activeTab = 'media'; // 기본 활성 탭
+        
+        this.setupEventListeners();
+        // 초기화 완료 플래그 설정
+        isModalInitialized = true;
       }
-    }
-    
-    setupSwipeGestures() {
-      let startX = 0;
-      let startY = 0;
       
-      this.modal?.addEventListener('touchstart', (e) => {
-        if (window.innerWidth >= 1024) return; // 데스크톱에서는 스와이프 비활성화
+      setupEventListeners() {
+        // 모달 닫기
+        this.closeBtn?.addEventListener('click', () => this.close());
+        this.modal?.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.close();
+        });
         
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-      });
+        // 키보드 이벤트
+        document.addEventListener('keydown', (e) => {
+          if (!this.currentProject) return;
+          
+          if (e.key === 'Escape') this.close();
+          if (e.key === 'ArrowLeft') this.previousMedia();
+          if (e.key === 'ArrowRight') this.nextMedia();
+          
+          // 모바일에서 탭 간 키보드 네비게이션
+          if (window.innerWidth < 1024) {
+            if (e.key === '1') this.switchTab('media');
+            if (e.key === '2') this.switchTab('info');
+          }
+        });
+        
+        // 미디어 네비게이션
+        this.prevBtn?.addEventListener('click', () => this.previousMedia());
+        this.nextBtn?.addEventListener('click', () => this.nextMedia());
+        
+        // 탭 버튼 이벤트
+        this.mediaTab?.addEventListener('click', () => this.switchTab('media'));
+        this.infoTab?.addEventListener('click', () => this.switchTab('info'));
+        
+        // 터치 스와이프 이벤트 (모바일 전용)
+        this.setupSwipeGestures();
+        
+        // 화면 크기 변경 이벤트
+        window.addEventListener('resize', () => this.handleResize());
+      }
       
-      this.modal?.addEventListener('touchend', (e) => {
+      handleResize() {
+        if (window.innerWidth >= 1024) {
+          // 데스크톱: 모든 컨텐츠 표시
+          this.mediaContent?.classList.add('active');
+          this.infoContent?.classList.add('active');
+        } else {
+          // 모바일: 현재 활성 탭만 표시
+          this.switchTab(this.activeTab);
+        }
+      }
+      
+      setupSwipeGestures() {
+        let startX = 0;
+        let startY = 0;
+        
+        this.modal?.addEventListener('touchstart', (e) => {
+          if (window.innerWidth >= 1024) return; // 데스크톱에서는 스와이프 비활성화
+          
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        });
+        
+        this.modal?.addEventListener('touchend', (e) => {
+          if (window.innerWidth >= 1024) return;
+          
+          const endX = e.changedTouches[0].clientX;
+          const endY = e.changedTouches[0].clientY;
+          const diffX = startX - endX;
+          const diffY = startY - endY;
+          
+          // 수평 스와이프만 처리 (세로 스크롤과 구분)
+          if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+            if (diffX > 0) {
+              // 왼쪽으로 스와이프 -> 정보 탭
+              this.switchTab('info');
+            } else {
+              // 오른쪽으로 스와이프 -> 미디어 탭
+              this.switchTab('media');
+            }
+          }
+        });
+      }
+      
+      switchTab(tabName) {
+        // 데스크톱에서는 탭 전환하지 않음
         if (window.innerWidth >= 1024) return;
         
-        const endX = e.changedTouches[0].clientX;
-        const endY = e.changedTouches[0].clientY;
-        const diffX = startX - endX;
-        const diffY = startY - endY;
+        this.activeTab = tabName;
         
-        // 수평 스와이프만 처리 (세로 스크롤과 구분)
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-          if (diffX > 0) {
-            // 왼쪽으로 스와이프 -> 정보 탭
-            this.switchTab('info');
-          } else {
-            // 오른쪽으로 스와이프 -> 미디어 탭
-            this.switchTab('media');
-          }
+        // 모든 탭 버튼의 active 클래스 제거
+        this.mediaTab?.classList.remove('active');
+        this.infoTab?.classList.remove('active');
+        
+        // 모든 탭 컨텐츠의 active 클래스 제거
+        this.mediaContent?.classList.remove('active');
+        this.infoContent?.classList.remove('active');
+        
+        // ARIA 속성 초기화
+        this.mediaTab?.setAttribute('aria-selected', 'false');
+        this.infoTab?.setAttribute('aria-selected', 'false');
+        
+        // 선택된 탭 활성화
+        if (tabName === 'media') {
+          this.mediaTab?.classList.add('active');
+          this.mediaContent?.classList.add('active');
+          this.mediaTab?.setAttribute('aria-selected', 'true');
+        } else if (tabName === 'info') {
+          this.infoTab?.classList.add('active');
+          this.infoContent?.classList.add('active');
+          this.infoTab?.setAttribute('aria-selected', 'true');
         }
-      });
-    }
-    
-    switchTab(tabName) {
-      // 데스크톱에서는 탭 전환하지 않음
-      if (window.innerWidth >= 1024) return;
-      
-      this.activeTab = tabName;
-      
-      // 모든 탭 버튼의 active 클래스 제거
-      this.mediaTab?.classList.remove('active');
-      this.infoTab?.classList.remove('active');
-      
-      // 모든 탭 컨텐츠의 active 클래스 제거
-      this.mediaContent?.classList.remove('active');
-      this.infoContent?.classList.remove('active');
-      
-      // ARIA 속성 초기화
-      this.mediaTab?.setAttribute('aria-selected', 'false');
-      this.infoTab?.setAttribute('aria-selected', 'false');
-      
-      // 선택된 탭 활성화
-      if (tabName === 'media') {
-        this.mediaTab?.classList.add('active');
-        this.mediaContent?.classList.add('active');
-        this.mediaTab?.setAttribute('aria-selected', 'true');
-      } else if (tabName === 'info') {
-        this.infoTab?.classList.add('active');
-        this.infoContent?.classList.add('active');
-        this.infoTab?.setAttribute('aria-selected', 'true');
-      }
-    }
-    
-    open(projectSlug) {
-      const project = window.projectsData?.find(p => p.slug === projectSlug);
-      if (!project) return;
-      
-      this.currentProject = project;
-      this.currentMediaIndex = 0;
-      this.activeTab = 'media'; // 항상 미디어 탭으로 시작
-      
-      // 초기 탭 상태 설정
-      this.switchTab('media');
-      
-      this.updateContent();
-      this.modal?.classList.remove('hidden');
-      this.modal?.classList.add('flex');
-      document.body.style.overflow = 'hidden';
-    }
-    
-    close() {
-      this.modal?.classList.add('hidden');
-      this.modal?.classList.remove('flex');
-      document.body.style.overflow = 'auto';
-      this.currentProject = null;
-      this.activeTab = 'media';
-    }
-    
-    updateContent() {
-      if (!this.currentProject) return;
-      
-      const { data } = this.currentProject;
-      
-      // 제목 업데이트
-      if (this.modalTitle) {
-        this.modalTitle.textContent = data.title;
       }
       
-      // 미디어 업데이트
-      this.updateMedia();
-      
-      // 프로젝트 정보 업데이트
-      this.updateProjectInfo();
-    }
-    
-    updateMedia() {
-      if (!this.currentProject) return;
-      
-      const { data } = this.currentProject;
-      const hasVideo = data.video?.url;
-      const mediaItems = [];
-      
-      // 영상이 있으면 첫 번째로 추가
-      if (hasVideo) {
-        mediaItems.push({ type: 'video', content: data.video });
-      }
-      
-      // 이미지들 추가 (thumbnail 포함)
-      if (data.thumbnail) {
-        mediaItems.push({ type: 'image', content: data.thumbnail });
-      }
-      
-      // 미디어가 없으면 플레이스홀더
-      if (mediaItems.length === 0) {
-        this.currentMedia.innerHTML = `
-          <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white">
-            <div class="text-center">
-              <div class="text-8xl mb-4">🚀</div>
-              <div class="text-2xl font-bold">${data.title}</div>
-              <div class="text-lg opacity-75">미디어 없음</div>
-            </div>
-          </div>
-        `;
-        this.hideNavigation();
-        return;
-      }
-      
-      // 현재 미디어 표시
-      const currentItem = mediaItems[this.currentMediaIndex];
-      if (currentItem.type === 'video') {
-        this.currentMedia.innerHTML = `
-          <video 
-            class="w-full h-full object-cover" 
-            controls 
-            poster="${currentItem.content.thumbnail || data.thumbnail || ''}"
-            preload="metadata"
-          >
-            <source src="${currentItem.content.url}" type="video/mp4" />
-            당신의 브라우저는 비디오 태그를 지원하지 않습니다.
-          </video>
-        `;
-      } else {
-        this.currentMedia.innerHTML = `
-          <img 
-            src="${currentItem.content}" 
-            alt="${data.title}" 
-            class="w-full h-full object-cover"
-          />
-        `;
-      }
-      
-      // 썸네일 갤러리 업데이트
-      this.updateThumbnails(mediaItems);
-      
-      // 네비게이션 버튼 표시/숨김
-      if (mediaItems.length > 1) {
-        this.showNavigation();
-      } else {
-        this.hideNavigation();
-      }
-      
-      this.mediaItems = mediaItems;
-    }
-    
-    updateThumbnails(mediaItems) {
-      if (!this.mediaIndicators) return;
-      
-      this.mediaIndicators.innerHTML = '';
-      
-      if (mediaItems.length <= 1) return;
-      
-      mediaItems.forEach((item, index) => {
-        const thumbnail = document.createElement('button');
-        thumbnail.className = `relative w-16 h-12 rounded-lg overflow-hidden transition-all border-2 ${
-          index === this.currentMediaIndex 
-            ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
-            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
-        }`;
+      open(projectSlug) {
+        const project = window.projectsData?.find(p => p.slug === projectSlug);
+        if (!project) return;
         
-        if (item.type === 'video') {
-          const thumbnailSrc = item.content.thumbnail || this.currentProject.data.thumbnail;
-          thumbnail.innerHTML = `
-            <img 
-              src="${thumbnailSrc}" 
-              alt="Video thumbnail" 
-              class="w-full h-full object-cover" 
-              loading="lazy"
-              decoding="async"
-              width="120"
-              height="80"
-            />
-            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
+        this.currentProject = project;
+        this.currentMediaIndex = 0;
+        this.activeTab = 'media'; // 항상 미디어 탭으로 시작
+        
+        // 초기 탭 상태 설정
+        this.switchTab('media');
+        
+        this.updateContent();
+        this.modal?.classList.remove('hidden');
+        this.modal?.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      close() {
+        this.modal?.classList.add('hidden');
+        this.modal?.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+        this.currentProject = null;
+        this.activeTab = 'media';
+      }
+      
+      updateContent() {
+        if (!this.currentProject) return;
+        
+        const { data } = this.currentProject;
+        
+        // 제목 업데이트
+        if (this.modalTitle) {
+          this.modalTitle.textContent = data.title;
+        }
+        
+        // 미디어 업데이트
+        this.updateMedia();
+        
+        // 프로젝트 정보 업데이트
+        this.updateProjectInfo();
+      }
+      
+      updateMedia() {
+        if (!this.currentProject) return;
+        
+        const { data } = this.currentProject;
+        const hasVideo = data.video?.url;
+        const mediaItems = [];
+        
+        // 영상이 있으면 첫 번째로 추가
+        if (hasVideo) {
+          mediaItems.push({ type: 'video', content: data.video });
+        }
+        
+        // 이미지들 추가 (thumbnail 포함)
+        if (data.thumbnail) {
+          mediaItems.push({ type: 'image', content: data.thumbnail });
+        }
+        
+        // 미디어가 없으면 플레이스홀더
+        if (mediaItems.length === 0) {
+          this.currentMedia.innerHTML = `
+            <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white">
+              <div class="text-center">
+                <div class="text-8xl mb-4">🚀</div>
+                <div class="text-2xl font-bold">${data.title}</div>
+                <div class="text-lg opacity-75">미디어 없음</div>
+              </div>
             </div>
+          `;
+          this.hideNavigation();
+          return;
+        }
+        
+        // 현재 미디어 표시
+        const currentItem = mediaItems[this.currentMediaIndex];
+        if (currentItem.type === 'video') {
+          this.currentMedia.innerHTML = `
+            <video 
+              class="w-full h-full object-cover" 
+              controls 
+              poster="${currentItem.content.thumbnail || data.thumbnail || ''}"
+              preload="metadata"
+            >
+              <source src="${currentItem.content.url}" type="video/mp4" />
+              당신의 브라우저는 비디오 태그를 지원하지 않습니다.
+            </video>
           `;
         } else {
-          thumbnail.innerHTML = `
+          this.currentMedia.innerHTML = `
             <img 
-              src="${item.content}" 
-              alt="Thumbnail" 
-              class="w-full h-full object-cover" 
-              loading="lazy"
-              decoding="async"
-              width="120"
-              height="80"
+              src="${currentItem.content}" 
+              alt="${data.title}" 
+              class="w-full h-full object-cover"
             />
           `;
         }
         
-        thumbnail.onclick = () => this.goToMedia(index);
-        this.mediaIndicators.appendChild(thumbnail);
-      });
-    }
-    
-    updateProjectInfo() {
-      if (!this.currentProject || !this.projectInfo) return;
-      
-      const { data } = this.currentProject;
-      
-      this.projectInfo.innerHTML = `
-        <!-- 프로젝트 기본 정보 -->
-        <div class="mb-8">
-          <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">${data.title}</h3>
-          ${data.featured ? `
-            <div class="mb-4">
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200">
-                ⭐ Featured Project
-              </span>
-            </div>
-          ` : ''}
-          <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">${data.description}</p>
-        </div>
+        // 썸네일 갤러리 업데이트
+        this.updateThumbnails(mediaItems);
         
-        <!-- Technologies 섹션 -->
-        <div class="mb-8">
-          <h4 class="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-4 flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            Technologies
-          </h4>
-          <div class="flex flex-wrap gap-2">
-            ${data.tags.map(tag => 
-              `<span class="px-3 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm rounded-full font-medium shadow-sm hover:shadow-md transition-shadow">${tag}</span>`
-            ).join('')}
-          </div>
-        </div>
+        // 네비게이션 버튼 표시/숨김
+        if (mediaItems.length > 1) {
+          this.showNavigation();
+        } else {
+          this.hideNavigation();
+        }
         
-        <!-- Features 섹션 (실제 프로젝트 데이터에서 동적으로 로딩) -->
-        ${data.features && data.features.length > 0 ? `
+        this.mediaItems = mediaItems;
+      }
+      
+      updateThumbnails(mediaItems) {
+        if (!this.mediaIndicators) return;
+        
+        this.mediaIndicators.innerHTML = '';
+        
+        if (mediaItems.length <= 1) return;
+        
+        mediaItems.forEach((item, index) => {
+          const thumbnail = document.createElement('button');
+          thumbnail.className = `relative w-16 h-12 rounded-lg overflow-hidden transition-all border-2 ${
+            index === this.currentMediaIndex 
+              ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
+              : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+          }`;
+          
+          if (item.type === 'video') {
+            const thumbnailSrc = item.content.thumbnail || this.currentProject.data.thumbnail;
+            thumbnail.innerHTML = `
+              <img 
+                src="${thumbnailSrc}" 
+                alt="Video thumbnail" 
+                class="w-full h-full object-cover" 
+                loading="lazy"
+                decoding="async"
+                width="120"
+                height="80"
+              />
+              <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            `;
+          } else {
+            thumbnail.innerHTML = `
+              <img 
+                src="${item.content}" 
+                alt="Thumbnail" 
+                class="w-full h-full object-cover" 
+                loading="lazy"
+                decoding="async"
+                width="120"
+                height="80"
+              />
+            `;
+          }
+          
+          thumbnail.onclick = () => this.goToMedia(index);
+          this.mediaIndicators.appendChild(thumbnail);
+        });
+      }
+      
+      updateProjectInfo() {
+        if (!this.currentProject || !this.projectInfo) return;
+        
+        const { data } = this.currentProject;
+        
+        this.projectInfo.innerHTML = `
+          <!-- 프로젝트 기본 정보 -->
           <div class="mb-8">
-            <h4 class="text-lg font-semibold text-green-600 dark:text-green-400 mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-              </svg>
-              핵심 기능
-            </h4>
-            <ul class="space-y-3 text-gray-600 dark:text-gray-300">
-              ${data.features.map(feature => `
-                <li class="flex items-start">
-                  <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>${feature}</span>
-                </li>
-              `).join('')}
-            </ul>
+            <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">${data.title}</h3>
+            ${data.featured ? `
+              <div class="mb-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200">
+                  ⭐ Featured Project
+                </span>
+              </div>
+            ` : ''}
+            <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">${data.description}</p>
           </div>
-        ` : ''}
-        
-        <!-- Impact 섹션 (실제 프로젝트 데이터에서 동적으로 로딩) -->
-        ${data.impact ? `
+          
+          <!-- Technologies 섹션 -->
           <div class="mb-8">
-            <h4 class="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-4 flex items-center">
+            <h4 class="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
-              프로젝트 임팩트
+              Technologies
             </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              ${data.impact.users ? `
-                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div class="flex items-center mb-2">
-                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-                    </svg>
-                    <span class="text-sm font-medium text-blue-800 dark:text-blue-300">사용자</span>
-                  </div>
-                  <div class="text-lg font-bold text-blue-900 dark:text-blue-100">${data.impact.users}</div>
-                </div>
-              ` : ''}
-              ${data.impact.companies ? `
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-                  <div class="flex items-center mb-2">
-                    <svg class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                    <span class="text-sm font-medium text-green-800 dark:text-green-300">기업 도입</span>
-                  </div>
-                  <div class="text-lg font-bold text-green-900 dark:text-green-100">${data.impact.companies}</div>
-                </div>  
-              ` : ''}
-              ${data.impact.improvement ? `
-                <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-                  <div class="flex items-center mb-2">
-                    <svg class="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                    </svg>
-                    <span class="text-sm font-medium text-purple-800 dark:text-purple-300">성과 개선</span>
-                  </div>
-                  <div class="text-lg font-bold text-purple-900 dark:text-purple-100">${data.impact.improvement}</div>
-                </div>
-              ` : ''}
-              ${data.impact.cost_saving ? `
-                <div class="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
-                  <div class="flex items-center mb-2">
-                    <svg class="w-5 h-5 text-orange-600 dark:text-orange-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                    </svg>
-                    <span class="text-sm font-medium text-orange-800 dark:text-orange-300">비용 절감</span>
-                  </div>
-                  <div class="text-lg font-bold text-orange-900 dark:text-orange-100">${data.impact.cost_saving}</div>
-                </div>
-              ` : ''}
+            <div class="flex flex-wrap gap-2">
+              ${data.tags.map(tag => 
+                `<span class="px-3 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm rounded-full font-medium shadow-sm hover:shadow-md transition-shadow">${tag}</span>`
+              ).join('')}
             </div>
           </div>
-        ` : ''}
-        
-        <!-- 프로젝트 메타 정보 -->
-        <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">프로젝트 날짜</div>
-          <div class="text-gray-900 dark:text-white font-medium">${new Date(data.date).toLocaleDateString('ko-KR')}</div>
-        </div>
-        
-        <!-- 액션 버튼들 -->
-        <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-          ${data.links?.site ? `
-            <a href="${data.links.site}" target="_blank" rel="noopener noreferrer"
-               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-              </svg>
-              Visit Project
-            </a>
-          ` : ''}
-          ${data.links?.github ? `
-            <a href="${data.links.github}" target="_blank" rel="noopener noreferrer" 
-               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
-              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-              </svg>
-              GitHub
-            </a>
-          ` : ''}
-          ${data.links?.demo ? `
-            <a href="${data.links.demo}" target="_blank" rel="noopener noreferrer"
-               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M19 10a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              Live Demo
-            </a>
-          ` : ''}
-        </div>
-        
-        <!-- 프로젝트 상세 내용 -->
-        ${this.currentProject.body ? `
-          <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-              </svg>
-              프로젝트 상세 설명
-            </h4>
-            <div id="projectContent" class="prose prose-lg dark:prose-invert max-w-none">
-              <!-- 마크다운 내용이 여기에 렌더링됩니다 -->
+          
+          <!-- Features 섹션 (실제 프로젝트 데이터에서 동적으로 로딩) -->
+          ${data.features && data.features.length > 0 ? `
+            <div class="mb-8">
+              <h4 class="text-lg font-semibold text-green-600 dark:text-green-400 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                </svg>
+                핵심 기능
+              </h4>
+              <ul class="space-y-3 text-gray-600 dark:text-gray-300">
+                ${data.features.map(feature => `
+                  <li class="flex items-start">
+                    <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${feature}</span>
+                  </li>
+                `).join('')}
+              </ul>
             </div>
+          ` : ''}
+          
+          <!-- Impact 섹션 (실제 프로젝트 데이터에서 동적으로 로딩) -->
+          ${data.impact ? `
+            <div class="mb-8">
+              <h4 class="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                프로젝트 임팩트
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                ${data.impact.users ? `
+                  <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div class="flex items-center mb-2">
+                      <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                      </svg>
+                      <span class="text-sm font-medium text-blue-800 dark:text-blue-300">사용자</span>
+                    </div>
+                    <div class="text-lg font-bold text-blue-900 dark:text-blue-100">${data.impact.users}</div>
+                  </div>
+                ` : ''}
+                ${data.impact.companies ? `
+                  <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                    <div class="flex items-center mb-2">
+                      <svg class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                      </svg>
+                      <span class="text-sm font-medium text-green-800 dark:text-green-300">기업 도입</span>
+                    </div>
+                    <div class="text-lg font-bold text-green-900 dark:text-green-100">${data.impact.companies}</div>
+                  </div>  
+                ` : ''}
+                ${data.impact.improvement ? `
+                  <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <div class="flex items-center mb-2">
+                      <svg class="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                      </svg>
+                      <span class="text-sm font-medium text-purple-800 dark:text-purple-300">성과 개선</span>
+                    </div>
+                    <div class="text-lg font-bold text-purple-900 dark:text-purple-100">${data.impact.improvement}</div>
+                  </div>
+                ` : ''}
+                ${data.impact.cost_saving ? `
+                  <div class="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+                    <div class="flex items-center mb-2">
+                      <svg class="w-5 h-5 text-orange-600 dark:text-orange-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                      </svg>
+                      <span class="text-sm font-medium text-orange-800 dark:text-orange-300">비용 절감</span>
+                    </div>
+                    <div class="text-lg font-bold text-orange-900 dark:text-orange-100">${data.impact.cost_saving}</div>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
+          
+          <!-- 프로젝트 메타 정보 -->
+          <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">프로젝트 날짜</div>
+            <div class="text-gray-900 dark:text-white font-medium">${new Date(data.date).toLocaleDateString('ko-KR')}</div>
           </div>
-        ` : ''}
-      `;
+          
+          <!-- 액션 버튼들 -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            ${data.links?.site ? `
+              <a href="${data.links.site}" target="_blank" rel="noopener noreferrer"
+                 class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                Visit Project
+              </a>
+            ` : ''}
+            ${data.links?.github ? `
+              <a href="${data.links.github}" target="_blank" rel="noopener noreferrer" 
+                 class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+              </a>
+            ` : ''}
+            ${data.links?.demo ? `
+              <a href="${data.links.demo}" target="_blank" rel="noopener noreferrer"
+                 class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M19 10a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Live Demo
+              </a>
+            ` : ''}
+          </div>
+          
+          <!-- 프로젝트 상세 내용 -->
+          ${this.currentProject.body ? `
+            <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+              <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                프로젝트 상세 설명
+              </h4>
+              <div id="projectContent" class="prose prose-lg dark:prose-invert max-w-none">
+                <!-- 마크다운 내용이 여기에 렌더링됩니다 -->
+              </div>
+            </div>
+          ` : ''}
+        `;
+        
+        // 프로젝트 본문 내용이 있으면 마크다운을 HTML로 변환하여 표시
+        if (this.currentProject.body) {
+          this.renderMarkdownContent();
+        }
+      }
       
-      // 프로젝트 본문 내용이 있으면 마크다운을 HTML로 변환하여 표시
-      if (this.currentProject.body) {
-        this.renderMarkdownContent();
+      async renderMarkdownContent() {
+        try {
+          // marked.js 라이브러리가 로드되어 있지 않다면 동적으로 로드
+          if (typeof marked === 'undefined') {
+            await this.loadMarkedJS();
+          }
+          
+          const contentElement = document.getElementById('projectContent');
+          if (contentElement && this.currentProject.body) {
+            // 마크다운을 HTML로 변환
+            const htmlContent = marked.parse(this.currentProject.body);
+            contentElement.innerHTML = htmlContent;
+          }
+        } catch (error) {
+          console.error('마크다운 렌더링 오류:', error);
+          // 오류 시 원본 텍스트 표시
+          const contentElement = document.getElementById('projectContent');
+          if (contentElement && this.currentProject.body) {
+            contentElement.innerHTML = `<pre class="whitespace-pre-wrap">${this.currentProject.body}</pre>`;
+          }
+        }
+      }
+      
+      async loadMarkedJS() {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+      
+      goToMedia(index) {
+        this.currentMediaIndex = index;
+        this.updateMedia();
+      }
+      
+      previousMedia() {
+        if (!this.mediaItems || this.mediaItems.length <= 1) return;
+        this.currentMediaIndex = this.currentMediaIndex > 0 ? this.currentMediaIndex - 1 : this.mediaItems.length - 1;
+        this.updateMedia();
+      }
+      
+      nextMedia() {
+        if (!this.mediaItems || this.mediaItems.length <= 1) return;
+        this.currentMediaIndex = this.currentMediaIndex < this.mediaItems.length - 1 ? this.currentMediaIndex + 1 : 0;
+        this.updateMedia();
+      }
+      
+      showNavigation() {
+        this.prevBtn?.classList.remove('hidden');
+        this.nextBtn?.classList.remove('hidden');
+      }
+      
+      hideNavigation() {
+        this.prevBtn?.classList.add('hidden');
+        this.nextBtn?.classList.add('hidden');
       }
     }
     
-    async renderMarkdownContent() {
-      try {
-        // marked.js 라이브러리가 로드되어 있지 않다면 동적으로 로드
-        if (typeof marked === 'undefined') {
-          await this.loadMarkedJS();
-        }
-        
-        const contentElement = document.getElementById('projectContent');
-        if (contentElement && this.currentProject.body) {
-          // 마크다운을 HTML로 변환
-          const htmlContent = marked.parse(this.currentProject.body);
-          contentElement.innerHTML = htmlContent;
-        }
-      } catch (error) {
-        console.error('마크다운 렌더링 오류:', error);
-        // 오류 시 원본 텍스트 표시
-        const contentElement = document.getElementById('projectContent');
-        if (contentElement && this.currentProject.body) {
-          contentElement.innerHTML = `<pre class="whitespace-pre-wrap">${this.currentProject.body}</pre>`;
-        }
-      }
-    }
-    
-    async loadMarkedJS() {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-    
-    goToMedia(index) {
-      this.currentMediaIndex = index;
-      this.updateMedia();
-    }
-    
-    previousMedia() {
-      if (!this.mediaItems || this.mediaItems.length <= 1) return;
-      this.currentMediaIndex = this.currentMediaIndex > 0 ? this.currentMediaIndex - 1 : this.mediaItems.length - 1;
-      this.updateMedia();
-    }
-    
-    nextMedia() {
-      if (!this.mediaItems || this.mediaItems.length <= 1) return;
-      this.currentMediaIndex = this.currentMediaIndex < this.mediaItems.length - 1 ? this.currentMediaIndex + 1 : 0;
-      this.updateMedia();
-    }
-    
-    showNavigation() {
-      this.prevBtn?.classList.remove('hidden');
-      this.nextBtn?.classList.remove('hidden');
-    }
-    
-    hideNavigation() {
-      this.prevBtn?.classList.add('hidden');
-      this.nextBtn?.classList.add('hidden');
+    // 모달 인스턴스 생성 및 전역 함수 등록
+    const modal = new ProjectModal();
+    // modal이 성공적으로 생성되었을 때만 전역 함수 등록
+    if (modal.modal) {
+      window.openProjectModal = (slug) => modal.open(slug);
+      window.closeProjectModal = () => modal.close();
     }
   }
-  
-  // 모달 인스턴스 생성 및 전역 함수 등록
-  const modal = new ProjectModal();
-  window.openProjectModal = (slug) => modal.open(slug);
-  window.closeProjectModal = () => modal.close();
+
+  // Astro의 뷰 트랜지션 완료 후 스크립트 실행
+  document.addEventListener('astro:page-load', initializeProjectModal);
 </script>
 
 <style>
