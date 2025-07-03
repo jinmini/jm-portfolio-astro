@@ -12,7 +12,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
+    <div className="fixed inset-0 z-50 lg:hidden h-screen">
       {/* 배경 오버레이 */}
       <div 
         className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
@@ -20,9 +20,9 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       />
       
       {/* 메뉴 패널 */}
-      <div className="absolute inset-0 flex">
-        <nav className="flex flex-col justify-center px-8">
-          <ul className="space-y-8">
+      <div className="absolute inset-0 flex h-full">
+        <nav className="flex w-full flex-col items-center justify-center px-8">
+          <ul className="space-y-8 text-center">
             {navInfo.map(({ path, name, animation }, index) => (
               <li 
                 key={path} 
