@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import rehypeSlug from 'rehype-slug';
 
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
@@ -11,9 +12,15 @@ export default defineConfig({
   
   integrations: [
     react(),
-    mdx(),
+    mdx({
+      rehypePlugins: [rehypeSlug],
+    }),
     tailwind()
   ],
+
+  markdown: {
+    rehypePlugins: [rehypeSlug],
+  },
 
   output: 'static',
 

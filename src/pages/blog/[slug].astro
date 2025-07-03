@@ -4,6 +4,7 @@ import { Responsive } from '../../components/common';
 import Section from '../../components/common/Section.astro';
 import Layout from '../../layouts/MainGridLayout.astro';
 import BlogLayout from '../../layouts/BlogLayout.astro';
+import TableOfContentsClient from '../../components/blog/TableOfContentsClient';
 
 export async function getStaticPaths() {
   const stories = await getCollection('blog');
@@ -19,11 +20,14 @@ type Props = {
 };
 
 const { blog } = Astro.props;
-const { Content } = await blog.render();
+const { Content, headings } = await blog.render();
 const pageTitle = `${blog.data.title} - 포트폴리오`;
 ---
 
 <Layout title={pageTitle} hasHeaderBackground={true}>
+  <!-- Sticky Table of Contents - Astro Island for client-side interactivity -->
+  <TableOfContentsClient headings={headings} client:load />
+  
   <Section size="narrow">
     <Responsive>
       <div class="py-8 sm:py-12">
