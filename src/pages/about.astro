@@ -118,11 +118,18 @@ const pageDescription = "ESG AI 전문가이자 풀스택 개발자, 김진의 �
 </MainGridLayout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initializeAboutPage() {
     const tabsContainer = document.getElementById('category-tabs');
+    // about 페이지가 아니면 초기화 중단
+    if (!tabsContainer) return;
+
     const kpiGrid = document.getElementById('kpi-grid');
     const timelineView = document.getElementById('timeline-view');
     const allTimelineCards = Array.from(document.querySelectorAll('.timeline-card')) as HTMLElement[];
+
+    // 이미 이벤트 리스너가 설정되었다면 중복 부착 방지
+    if (tabsContainer.dataset.initialized === 'true') return;
+    tabsContainer.dataset.initialized = 'true';
 
     function updateView(activeCategory) {
       // Update Tabs
@@ -199,7 +206,9 @@ const pageDescription = "ESG AI 전문가이자 풀스택 개발자, 김진의 �
           elementToScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
-  });
+  }
+
+  document.addEventListener('astro:page-load', initializeAboutPage);
 </script>
 
 
