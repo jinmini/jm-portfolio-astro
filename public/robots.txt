@@ -1,0 +1,31 @@
+# Robots.txt for jm-portfolio-astro
+# 포트폴리오 사이트 개발 중 - 미완성 콘텐츠 크롤링 제한
+
+User-agent: *
+
+# 메인 페이지와 About 페이지는 허용
+Allow: /
+Allow: /about
+
+# 미완성 콘텐츠 영역 차단
+Disallow: /blog/
+Disallow: /project/
+
+# 개발 문서 및 내부 파일 차단  
+Disallow: /docs/
+
+# 에셋 파일들은 허용 (SEO 및 성능에 필요)
+Allow: /images/
+Allow: /videos/
+Allow: /fonts/
+Allow: /favicon.svg
+
+# 사이트맵 (추후 추가 예정)
+# Sitemap: https://your-domain.com/sitemap.xml
+
+# 크롤링 속도 제한 (서버 부하 방지)
+Crawl-delay: 1
+
+# 추가 정보
+# 이 사이트는 현재 개발 중입니다
+# 완성 후 robots.txt를 업데이트할 예정입니다 
