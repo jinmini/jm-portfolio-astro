@@ -184,11 +184,24 @@ const { projects } = Astro.props;
         this.nextBtn?.removeEventListener('click', this.handleNextMedia);
         this.mediaTab?.removeEventListener('click', this.handleMediaTab);
         this.infoTab?.removeEventListener('click', this.handleInfoTab);
-        window.removeEventListener('resize', this.handleResize);
+        window.removeEventListener('resize', this.handleResizeEvent);
         
         // 터치 이벤트 정리
         this.modal?.removeEventListener('touchstart', this.handleTouchStart);
         this.modal?.removeEventListener('touchend', this.handleTouchEnd);
+      }
+      
+      // 디바운스 함수 추가
+      debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
       }
       
       setupEventListeners() {
@@ -213,7 +226,9 @@ const { projects } = Astro.props;
         this.handleNextMedia = () => this.nextMedia();
         this.handleMediaTab = () => this.switchTab('media');
         this.handleInfoTab = () => this.switchTab('info');
-        this.handleResize = () => this.handleResize();
+        this.handleResizeEvent = this.debounce(() => {
+          this.handleResize();
+        }, 100);
         
         // 이벤트 리스너 등록
         this.closeBtn?.addEventListener('click', this.handleClose);
@@ -223,7 +238,7 @@ const { projects } = Astro.props;
         this.nextBtn?.addEventListener('click', this.handleNextMedia);
         this.mediaTab?.addEventListener('click', this.handleMediaTab);
         this.infoTab?.addEventListener('click', this.handleInfoTab);
-        window.addEventListener('resize', this.handleResize);
+        window.addEventListener('resize', this.handleResizeEvent);
         
         // 터치 스와이프 이벤트 설정
         this.setupSwipeGestures();
