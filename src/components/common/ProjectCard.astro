@@ -105,6 +105,8 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
           <!-- 액션 버튼들 -->
           <div class="flex gap-4">
             <button 
+              data-project-modal="true"
+              data-project-id={slug}
               onclick={`openProjectModal('${slug}'); event.stopPropagation();`}
               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-semibold shadow-lg"
             >
@@ -217,6 +219,8 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
 
           <!-- 액션 버튼 -->
           <button 
+            data-project-modal="true"
+            data-project-id={slug}
             onclick={`openProjectModal('${slug}'); event.stopPropagation();`}
             class="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-medium text-sm"
           >
@@ -318,6 +322,8 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
           <!-- 액션 버튼들 -->
           <div class="flex gap-3">
             <button 
+              data-project-modal="true"
+              data-project-id={slug}
               onclick={`openProjectModal('${slug}'); event.stopPropagation();`}
               class="flex-1 inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-semibold"
             >
@@ -430,6 +436,8 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
 
           <!-- Details 버튼 -->
           <button 
+            data-project-modal="true"
+            data-project-id={slug}
             onclick={`openProjectModal('${slug}'); event.stopPropagation();`}
             class="w-full mt-2 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-medium shadow-lg text-sm"
           >
