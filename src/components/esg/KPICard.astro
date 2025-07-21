@@ -1,4 +1,15 @@
 ---
+// ESG 이미지 imports
+import e1Image from '../../assets/images/esg/e1.webp';
+import e2Image from '../../assets/images/esg/e2.webp';
+import e3Image from '../../assets/images/esg/e3.webp';
+import g1Image from '../../assets/images/esg/g1.webp';
+import g2Image from '../../assets/images/esg/g2.webp';
+import g3Image from '../../assets/images/esg/g3.webp';
+import s1Image from '../../assets/images/esg/s1.webp';
+import s2Image from '../../assets/images/esg/s2.webp';
+import s3Image from '../../assets/images/esg/s3.webp';
+
 type KPICardProps = {
   item: {
     title: string;
@@ -12,6 +23,27 @@ type KPICardProps = {
 
 const { item } = Astro.props;
 const { title, category, impact, emphasis, thumbnail, slug } = item;
+
+// 이미지 매핑 함수
+const getESGImage = (thumbnailPath: string, itemSlug: string) => {
+  if (thumbnailPath?.includes('assets')) {
+    const imageMap = {
+      'e1': e1Image,
+      'e2': e2Image,
+      'e3': e3Image,
+      'g1': g1Image,
+      'g2': g2Image,
+      'g3': g3Image,
+      's1': s1Image,
+      's2': s2Image,
+      's3': s3Image,
+    };
+    return imageMap[itemSlug as keyof typeof imageMap]?.src || thumbnailPath;
+  }
+  return thumbnailPath; // public 경로인 경우 문자열 그대로 반환
+};
+
+const finalThumbnail = getESGImage(thumbnail, slug);
 
 const categoryStyles = {
   E: 'border-green-400',
@@ -53,7 +85,7 @@ const anchorHref = `/about?category=${category}#esg-item-${slug}`;
 >
   <div 
     class="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-300 ease-in-out group-hover:scale-110"
-    style={{ backgroundImage: `url(${thumbnail})` }}
+    style={{ backgroundImage: `url(${finalThumbnail})` }}
   ></div>
 
   <div class="absolute inset-0 w-full h-full bg-black bg-opacity-40 group-hover:bg-opacity-60 transition-colors duration-300"></div>
