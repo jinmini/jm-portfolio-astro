@@ -6,7 +6,8 @@ import { getCollection } from 'astro:content';
 import ProjectCard from '../components/common/ProjectCard.astro';
 import ProjectModal from '../components/project/ProjectModal.astro';
 
-const projects = await getCollection('project');
+const projects = (await getCollection('project'))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <Layout title="프로젝트 - 포트폴리오" hasHeaderBackground={true}>
