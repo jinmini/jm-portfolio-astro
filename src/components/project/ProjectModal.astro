@@ -125,12 +125,22 @@ const { projects } = Astro.props;
     // 이미 초기화되었다면 중복 실행 방지
     if (isModalInitialized) return;
 
+    // 필수 DOM 요소들이 존재하는지 확인
+    const modalElement = document.getElementById('projectModal');
+    const modalButtons = document.querySelectorAll('[data-project-modal]');
+    
+    if (!modalElement || modalButtons.length === 0) {
+      console.warn('🔄 ProjectModal: 필수 요소들이 아직 준비되지 않음, 100ms 후 재시도...');
+      setTimeout(initializeProjectModal, 100);
+      return;
+    }
+
+    console.log('✅ ProjectModal: 초기화 시작', { modal: !!modalElement, buttons: modalButtons.length });
+
     class ProjectModal {
       constructor() {
-        this.modal = document.getElementById('projectModal');
-        // modal이 없으면 초기화 중단 (다른 페이지일 경우)
-        if (!this.modal) return;
-
+        this.modal = modalElement; // 이미 확인된 요소 사용
+        
         // 초기 상태 확실히 설정
         this.modal.classList.add('hidden');
         this.modal.classList.remove('flex');
