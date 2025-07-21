@@ -1,0 +1,161 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectCard from '../common/ProjectCard.astro';
+
+interface Props {
+  projects: CollectionEntry<'project'>[];
+  variant?: 'simple' | 'normal' | 'compact';
+}
+
+const { projects, variant = 'normal' } = Astro.props;
+---
+
+<!-- 모바일 전용 스와이프 컨테이너 -->
+<div class="block lg:hidden">
+  <div class="splide" id="project-swiper">
+    <div class="splide__track">
+      <ul class="splide__list">
+        {projects.map((project, index) => (
+          <li class="splide__slide">
+            <div class="px-2">
+              <ProjectCard 
+                project={project} 
+                variant={variant}
+                index={index}
+                class="h-full"
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+    
+    <!-- 인디케이터 -->
+    <div class="splide__pagination splide__pagination--custom"></div>
+  </div>
+</div>
+
+<!-- 스타일링 -->
+<style>
+  /* Splide 기본 스타일 오버라이드 */
+  .splide {
+    position: relative;
+  }
+  
+  .splide__slide {
+    padding: 0 !important;
+  }
+  
+  /* 커스텀 인디케이터 스타일 */
+  .splide__pagination--custom {
+    position: static;
+    padding: 1rem 0;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .splide__pagination--custom .splide__pagination__page {
+    background: #e5e7eb;
+    border: none;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+  }
+  
+  .splide__pagination--custom .splide__pagination__page.is-active {
+    background: linear-gradient(45deg, #06b6d4, #3b82f6);
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  
+  /* 다크모드 지원 */
+  :global(.dark) .splide__pagination--custom .splide__pagination__page {
+    background: #4b5563;
+  }
+  
+  :global(.dark) .splide__pagination--custom .splide__pagination__page.is-active {
+    background: linear-gradient(45deg, #06b6d4, #3b82f6);
+  }
+</style>
+
+<!-- 스크립트 -->
+<script>
+  import { Splide } from '@splidejs/splide';
+  
+  // DOM이 로드된 후 초기화
+  document.addEventListener('DOMContentLoaded', () => {
+    const swiperElement = document.getElementById('project-swiper');
+    
+    if (swiperElement) {
+      const splide = new Splide('#project-swiper', {
+        type: 'slide',
+        perPage: 1,
+        perMove: 1,
+        gap: '1rem',
+        padding: {
+          left: '1.5rem',
+          right: '1.5rem'
+        },
+        arrows: false,
+        pagination: true,
+        wheel: false,
+        drag: true,
+        snap: true,
+        focus: 'center',
+        trimSpace: false,
+        autoWidth: false,
+        breakpoints: {
+          640: {
+            padding: {
+              left: '1rem',
+              right: '1rem'
+            },
+            gap: '0.75rem'
+          }
+        }
+      });
+      
+      splide.mount();
+      
+      // 터치 제스처 최적화
+      let startX = 0;
+      let startY = 0;
+      let isVerticalScroll = false;
+      
+      swiperElement.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isVerticalScroll = false;
+      }, { passive: true });
+      
+      swiperElement.addEventListener('touchmove', (e) => {
+        if (!startX || !startY) return;
+        
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        
+        const diffX = Math.abs(currentX - startX);
+        const diffY = Math.abs(currentY - startY);
+        
+        // 수직 스크롤이 우선인지 확인
+        if (!isVerticalScroll && diffY > diffX && diffY > 10) {
+          isVerticalScroll = true;
+        }
+        
+        // 수평 스와이프인 경우 기본 스크롤 방지
+        if (!isVerticalScroll && diffX > 10) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      
+      swiperElement.addEventListener('touchend', () => {
+        startX = 0;
+        startY = 0;
+        isVerticalScroll = false;
+      }, { passive: true });
+    }
+  });
+</script> 

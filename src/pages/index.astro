@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import BlogCard from '../components/common/BlogCard.astro';
 import ProjectCard from '../components/common/ProjectCard.astro';
 import ProjectModal from '../components/project/ProjectModal.astro';
+import ProjectSwiper from '../components/project/ProjectSwiper.astro';
 import HeroSection from '../components/hero/HeroSection.astro';
 import { ScrollReveal } from '../components/common';
 
@@ -61,8 +62,8 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 
 			{featuredProjects.length > 0 ? (
 				<div class="space-y-8">
-					<!-- Featured 프로젝트 레이아웃 (3개 프로젝트 최적화) -->
-					<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+					<!-- PC 화면: Featured 프로젝트 레이아웃 (3개 프로젝트 최적화) -->
+					<div class="hidden lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
 						
 						<!-- 메인 Featured 프로젝트 (2열 차지) -->
 						{mainFeaturedProject && (
@@ -104,24 +105,18 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 						)}
 					</div>
 
-					<!-- 모바일에서의 추가 프로젝트들 (lg 이상에서는 숨김) -->
-					{subFeaturedProjects.length === 0 && (
-						<div class="grid md:grid-cols-2 gap-6 lg:hidden">
-							<!-- 빈 공간 채우기용 카드들 -->
-							<div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl flex items-center justify-center">
-								<div class="text-center">
-									<div class="text-4xl mb-4">🚧</div>
-									<p class="text-gray-600 dark:text-gray-300 font-medium">새 프로젝트 준비 중</p>
-								</div>
-							</div>
-							<div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl flex items-center justify-center">
-								<div class="text-center">
-									<div class="text-4xl mb-4">💡</div>
-									<p class="text-gray-600 dark:text-gray-300 font-medium">아이디어 구상 중</p>
-								</div>
-							</div>
-						</div>
-					)}
+					<!-- 모바일 화면: 스와이프 가능한 프로젝트 슬라이더 -->
+					<ScrollReveal 
+						direction="up" 
+						delay={0} 
+						duration={800}
+						client:load
+					>
+						<ProjectSwiper 
+							projects={featuredProjects} 
+							variant="normal"
+						/>
+					</ScrollReveal>
 				</div>
 			) : (
 				<!-- 프로젝트가 없을 때 -->

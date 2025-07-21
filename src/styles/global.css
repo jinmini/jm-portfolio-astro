@@ -1,3 +1,6 @@
+/* Splide CSS Import - 맨 위로 이동 */
+@import '@splidejs/splide/css';
+
 /* Pretendard Variable Font */
 @font-face {
   font-family: 'Pretendard Variable';
@@ -48,6 +51,15 @@
     @apply transition-all duration-300;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+  }
+  
+  /* 프로젝트 스와이퍼 커스텀 스타일 */
+  .project-swiper-container {
+    @apply relative overflow-hidden;
+  }
+  
+  .project-swiper-slide {
+    @apply flex items-stretch;
   }
   
   .image-lazy-global {
