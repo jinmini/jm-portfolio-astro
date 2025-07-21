@@ -675,7 +675,8 @@ const { projects } = Astro.props;
     }
   }
 
-  // Astro의 뷰 트랜지션 완료 후 스크립트 실행
+  // 일반 페이지 로드와 Astro 뷰 트랜지션 모두 처리
+  document.addEventListener('DOMContentLoaded', initializeProjectModal);
   document.addEventListener('astro:page-load', initializeProjectModal);
 </script>
 
