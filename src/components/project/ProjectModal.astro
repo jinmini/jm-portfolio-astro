@@ -131,6 +131,10 @@ const { projects } = Astro.props;
         // modal이 없으면 초기화 중단 (다른 페이지일 경우)
         if (!this.modal) return;
 
+        // 초기 상태 확실히 설정
+        this.modal.classList.add('hidden');
+        this.modal.classList.remove('flex');
+
         this.modalTitle = document.getElementById('modalTitle');
         this.currentMedia = document.getElementById('currentMedia');
         this.mediaIndicators = document.getElementById('mediaIndicators');
@@ -721,8 +725,8 @@ const { projects } = Astro.props;
     }
   }
 
-  /* 모달 애니메이션 */
-  #projectModal {
+  /* 모달 애니메이션 - 조건부 적용 */
+  #projectModal.flex {
     animation: modalFadeIn 0.3s ease-out;
   }
   

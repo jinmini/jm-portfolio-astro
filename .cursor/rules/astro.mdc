@@ -1,6 +1,5 @@
 ---
-description: 
-globs: 
+globs: *.astro
 alwaysApply: false
 ---
   You are an expert in JavaScript, TypeScript, and Astro framework for scalable web development.

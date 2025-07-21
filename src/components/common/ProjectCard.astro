@@ -4,7 +4,7 @@ import { Image } from 'astro:assets';
 
 interface Props {
   project: CollectionEntry<'project'>;
-  variant?: 'simple' | 'detailed' | 'featured' | 'compact';
+  variant?: 'simple' | 'detailed' | 'featured' | 'compact' | 'normal';
   index?: number;
   class?: string;
 }
@@ -23,7 +23,7 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
 {variant === 'featured' ? (
   <!-- Featured variant: 메인 Featured 프로젝트용 큰 카드 -->
   <div 
-    class={`project-card group relative aspect-[16/10] rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-1 cursor-pointer ${className}`}
+    class={`project-card group relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-1 cursor-pointer ${className}`}
     data-project-slug={slug}
     data-video-url={video?.url || ''}
     data-video-thumbnail={video?.thumbnail || thumbnail || ''}
@@ -232,6 +232,123 @@ const isReversed = variant === 'detailed' && index % 2 === 1;
       {video?.url && (
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 pointer-events-none">
           <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      )}
+    </div>
+  </div>
+) : variant === 'normal' ? (
+  <!-- Normal variant: 균형잡힌 카드 -->
+  <div 
+    class={`project-card group relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 cursor-pointer ${className}`}
+    data-project-slug={slug}
+    data-video-url={video?.url || ''}
+    data-video-thumbnail={video?.thumbnail || thumbnail || ''}
+    data-autoplay={video?.autoplay || false}
+    data-loop={video?.loop !== false}
+    onclick={`openProjectModal('${slug}')`}
+  >
+    <!-- 메인 미디어 영역 -->
+    <div class="relative w-full h-full overflow-hidden">
+      <div class="media-container w-full h-full">
+        {thumbnail ? (
+          <img 
+            src={thumbnail} 
+            alt={`${title} 프로젝트 썸네일`} 
+            class="thumbnail-image w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+            width="600"
+            height="450"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
+          />
+        ) : (
+          <div class="w-full h-full bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl animate-pulse-gradient">
+            🚀
+          </div>
+        )}
+        
+        <video 
+          class="lazy-video w-full h-full object-cover opacity-0 absolute inset-0 transition-opacity duration-500"
+          muted
+          loop={video?.loop !== false}
+          preload="none"
+          playsinline
+          poster={video?.thumbnail || thumbnail}
+        >
+          {video?.url && <source src={video.url} type="video/mp4" />}
+        </video>
+      </div>
+
+      <!-- Featured 배지 -->
+      {featured && (
+        <div class="absolute top-4 right-4 z-30">
+          <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+            ⭐ Featured
+          </span>
+        </div>
+      )}
+
+      <!-- 호버 오버레이 -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 flex flex-col justify-end p-6 z-20">
+        <div class="transform translate-y-8 group-hover:translate-y-0 transition-transform duration-700 delay-100">
+          <h3 class="text-2xl font-bold text-white mb-3">
+            {title}
+          </h3>
+          
+          <p class="text-white/90 text-base mb-4 line-clamp-2 leading-relaxed">
+            {description}
+          </p>
+          
+          <!-- 기술 스택 -->
+          <div class="flex flex-wrap gap-2 mb-4">
+            {tags.slice(0, 4).map((tag) => (
+              <span class="px-2 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full font-medium border border-white/30">
+                {tag}
+              </span>
+            ))}
+            {tags.length > 4 && (
+              <span class="px-2 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full font-medium border border-white/30">
+                +{tags.length - 4}
+              </span>
+            )}
+          </div>
+
+          <!-- 액션 버튼들 -->
+          <div class="flex gap-3">
+            <button 
+              onclick={`openProjectModal('${slug}'); event.stopPropagation();`}
+              class="flex-1 inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 font-semibold"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              자세히 보기
+            </button>
+            
+            {links?.site && (
+              <a
+                href={links.site}
+                target="_blank"
+                rel="noopener noreferrer"
+                onclick="event.stopPropagation();"
+                class="inline-flex items-center justify-center px-5 py-2.5 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold border border-white/30"
+                aria-label="라이브 사이트"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <!-- 비디오 재생 인디케이터 -->
+      {video?.url && (
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 pointer-events-none">
+          <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z"/>
           </svg>
         </div>

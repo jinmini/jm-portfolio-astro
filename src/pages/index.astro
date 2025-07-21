@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import BlogCard from '../components/common/BlogCard.astro';
 import ProjectCard from '../components/common/ProjectCard.astro';
 import ProjectModal from '../components/project/ProjectModal.astro';
+import ProjectSwiper from '../components/project/ProjectSwiper.astro';
 import HeroSection from '../components/hero/HeroSection.astro';
 import { ScrollReveal } from '../components/common';
 
@@ -36,7 +37,7 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 
 	<!-- Projects Preview Section -->
 	<section class="py-12 sm:py-16 lg:py-20 bg-gray-50 dark:bg-black">
-		<Section size="normal">
+		<Section size="wide">
 			<ScrollReveal 
 				direction="fade" 
 				delay={0} 
@@ -61,29 +62,30 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 
 			{featuredProjects.length > 0 ? (
 				<div class="space-y-8">
-					<!-- Featured 프로젝트 레이아웃 (순차 애니메이션 적용) -->
-					<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 auto-rows-min">
+					<!-- PC 화면: Featured 프로젝트 레이아웃 (3개 프로젝트 최적화) -->
+					<div class="hidden lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
 						
-						<!-- 메인 Featured 프로젝트 (큰 카드) -->
+						<!-- 메인 Featured 프로젝트 (2열 차지) -->
 						{mainFeaturedProject && (
-							<ScrollReveal 
-								direction="up" 
-								delay={0} 
-								duration={800}
-								className="lg:col-span-8"
-								client:load
-							>
-								<ProjectCard 
-									project={mainFeaturedProject} 
-									variant="featured" 
-									class="h-full"
-								/>
-							</ScrollReveal>
+							<div class="lg:col-span-2">
+								<ScrollReveal 
+									direction="up" 
+									delay={0} 
+									duration={800}
+									client:load
+								>
+									<ProjectCard 
+										project={mainFeaturedProject} 
+										variant="featured" 
+										class="h-full min-h-[400px]"
+									/>
+								</ScrollReveal>
+							</div>
 						)}
 
-						<!-- 서브 Featured 프로젝트들 (작은 카드들) -->
+						<!-- 서브 Featured 프로젝트들 (1열에 세로 배치) -->
 						{subFeaturedProjects.length > 0 && (
-							<div class="lg:col-span-4 space-y-6">
+							<div class="flex flex-col justify-between h-full">
 								{subFeaturedProjects.map((project, index) => (
 									<ScrollReveal 
 										direction="up" 
@@ -93,61 +95,28 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 									>
 										<ProjectCard 
 											project={project} 
-											variant="compact"
+											variant="normal"
 											index={index}
+											class="h-full"
 										/>
 									</ScrollReveal>
 								))}
-								
-								<!-- 추가 프로젝트 보기 카드 -->
-								{featuredProjects.length >= 3 && (
-									<ScrollReveal 
-										direction="up" 
-										delay={500} 
-										duration={600}
-										client:load
-									>
-										<div class="relative group">
-											<div class="aspect-[4/3] bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-green-500/10 dark:from-blue-500/20 dark:via-purple-500/20 dark:to-green-500/20 rounded-2xl border-2 border-dashed border-blue-300 dark:border-blue-600 flex flex-col items-center justify-center text-center p-6 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 cursor-pointer">
-												<div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-													<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-													</svg>
-												</div>
-												<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">더 많은 프로젝트</h3>
-												<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">다양한 프로젝트들을 확인해보세요</p>
-												<a 
-													href="/project"
-													class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium text-sm"
-												>
-													전체 보기 →
-												</a>
-											</div>
-										</div>
-									</ScrollReveal>
-								)}
 							</div>
 						)}
 					</div>
 
-					<!-- 모바일에서의 추가 프로젝트들 (lg 이상에서는 숨김) -->
-					{subFeaturedProjects.length === 0 && (
-						<div class="grid md:grid-cols-2 gap-6 lg:hidden">
-							<!-- 빈 공간 채우기용 카드들 -->
-							<div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl flex items-center justify-center">
-								<div class="text-center">
-									<div class="text-4xl mb-4">🚧</div>
-									<p class="text-gray-600 dark:text-gray-300 font-medium">새 프로젝트 준비 중</p>
-								</div>
-							</div>
-							<div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl flex items-center justify-center">
-								<div class="text-center">
-									<div class="text-4xl mb-4">💡</div>
-									<p class="text-gray-600 dark:text-gray-300 font-medium">아이디어 구상 중</p>
-								</div>
-							</div>
-						</div>
-					)}
+					<!-- 모바일 화면: 스와이프 가능한 프로젝트 슬라이더 -->
+					<ScrollReveal 
+						direction="up" 
+						delay={0} 
+						duration={800}
+						client:load
+					>
+						<ProjectSwiper 
+							projects={featuredProjects} 
+							variant="normal"
+						/>
+					</ScrollReveal>
 				</div>
 			) : (
 				<!-- 프로젝트가 없을 때 -->
