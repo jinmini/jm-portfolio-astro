@@ -24,23 +24,30 @@ type KPICardProps = {
 const { item } = Astro.props;
 const { title, category, impact, emphasis, thumbnail, slug } = item;
 
-// 이미지 매핑 함수
-const getESGImage = (thumbnailPath: string, itemSlug: string) => {
-  if (thumbnailPath?.includes('assets')) {
-    const imageMap = {
-      'e1': e1Image,
-      'e2': e2Image,
-      'e3': e3Image,
-      'g1': g1Image,
-      'g2': g2Image,
-      'g3': g3Image,
-      's1': s1Image,
-      's2': s2Image,
-      's3': s3Image,
-    };
-    return imageMap[itemSlug as keyof typeof imageMap]?.src || thumbnailPath;
+// 이미지 매핑 함수 수정
+const getESGImage = (thumbnailPath: string | undefined, itemSlug: string) => {
+  // ESG 이미지는 항상 매핑된 이미지를 사용
+  const imageMap = {
+    'e1': e1Image,
+    'e2': e2Image,
+    'e3': e3Image,
+    'g1': g1Image,
+    'g2': g2Image,
+    'g3': g3Image,
+    's1': s1Image,
+    's2': s2Image,
+    's3': s3Image,
+  };
+  
+  // slug를 기반으로 이미지 매핑 (더 안정적)
+  const mappedImage = imageMap[itemSlug as keyof typeof imageMap];
+  
+  if (mappedImage) {
+    return mappedImage.src;
   }
-  return thumbnailPath; // public 경로인 경우 문자열 그대로 반환
+  
+  // 매핑된 이미지가 없는 경우에만 원본 경로 사용
+  return thumbnailPath || '';
 };
 
 const finalThumbnail = getESGImage(thumbnail, slug);
