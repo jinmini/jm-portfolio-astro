@@ -120,26 +120,35 @@ const { projects } = Astro.props;
 <!-- 모달 제어 스크립트 -->
 <script>
   let isModalInitialized = false;
+  let modalInstance = null;
 
   function initializeProjectModal() {
-    // 이미 초기화되었다면 중복 실행 방지
-    if (isModalInitialized) return;
-
     // 필수 DOM 요소들이 존재하는지 확인
     const modalElement = document.getElementById('projectModal');
     const modalButtons = document.querySelectorAll('[data-project-modal]');
     
-    if (!modalElement || modalButtons.length === 0) {
-      console.warn('🔄 ProjectModal: 필수 요소들이 아직 준비되지 않음, 100ms 후 재시도...');
+    if (!modalElement) {
+      console.warn('🔄 ProjectModal: 모달 요소를 찾을 수 없음, 100ms 후 재시도...');
       setTimeout(initializeProjectModal, 100);
       return;
+    }
+
+    if (modalButtons.length === 0) {
+      console.warn('🔄 ProjectModal: 모달 버튼들을 찾을 수 없음, 100ms 후 재시도...');
+      setTimeout(initializeProjectModal, 100);
+      return;
+    }
+
+    // 이미 초기화되었다면 기존 인스턴스 정리
+    if (isModalInitialized && modalInstance) {
+      modalInstance.cleanup();
     }
 
     console.log('✅ ProjectModal: 초기화 시작', { modal: !!modalElement, buttons: modalButtons.length });
 
     class ProjectModal {
       constructor() {
-        this.modal = modalElement; // 이미 확인된 요소 사용
+        this.modal = modalElement;
         
         // 초기 상태 확실히 설정
         this.modal.classList.add('hidden');
@@ -161,48 +170,63 @@ const { projects } = Astro.props;
         
         this.currentProject = null;
         this.currentMediaIndex = 0;
-        this.activeTab = 'media'; // 기본 활성 탭
+        this.activeTab = 'media';
         
         this.setupEventListeners();
-        // 초기화 완료 플래그 설정
-        isModalInitialized = true;
+      }
+      
+      cleanup() {
+        // 이벤트 리스너 정리
+        this.closeBtn?.removeEventListener('click', this.handleClose);
+        this.modal?.removeEventListener('click', this.handleModalClick);
+        document.removeEventListener('keydown', this.handleKeydown);
+        this.prevBtn?.removeEventListener('click', this.handlePrevMedia);
+        this.nextBtn?.removeEventListener('click', this.handleNextMedia);
+        this.mediaTab?.removeEventListener('click', this.handleMediaTab);
+        this.infoTab?.removeEventListener('click', this.handleInfoTab);
+        window.removeEventListener('resize', this.handleResize);
+        
+        // 터치 이벤트 정리
+        this.modal?.removeEventListener('touchstart', this.handleTouchStart);
+        this.modal?.removeEventListener('touchend', this.handleTouchEnd);
       }
       
       setupEventListeners() {
-        // 모달 닫기
-        this.closeBtn?.addEventListener('click', () => this.close());
-        this.modal?.addEventListener('click', (e) => {
+        // 바인딩된 핸들러 생성
+        this.handleClose = () => this.close();
+        this.handleModalClick = (e) => {
           if (e.target === this.modal) this.close();
-        });
-        
-        // 키보드 이벤트
-        document.addEventListener('keydown', (e) => {
+        };
+        this.handleKeydown = (e) => {
           if (!this.currentProject) return;
           
           if (e.key === 'Escape') this.close();
           if (e.key === 'ArrowLeft') this.previousMedia();
           if (e.key === 'ArrowRight') this.nextMedia();
           
-          // 모바일에서 탭 간 키보드 네비게이션
           if (window.innerWidth < 1024) {
             if (e.key === '1') this.switchTab('media');
             if (e.key === '2') this.switchTab('info');
           }
-        });
+        };
+        this.handlePrevMedia = () => this.previousMedia();
+        this.handleNextMedia = () => this.nextMedia();
+        this.handleMediaTab = () => this.switchTab('media');
+        this.handleInfoTab = () => this.switchTab('info');
+        this.handleResize = () => this.handleResize();
         
-        // 미디어 네비게이션
-        this.prevBtn?.addEventListener('click', () => this.previousMedia());
-        this.nextBtn?.addEventListener('click', () => this.nextMedia());
+        // 이벤트 리스너 등록
+        this.closeBtn?.addEventListener('click', this.handleClose);
+        this.modal?.addEventListener('click', this.handleModalClick);
+        document.addEventListener('keydown', this.handleKeydown);
+        this.prevBtn?.addEventListener('click', this.handlePrevMedia);
+        this.nextBtn?.addEventListener('click', this.handleNextMedia);
+        this.mediaTab?.addEventListener('click', this.handleMediaTab);
+        this.infoTab?.addEventListener('click', this.handleInfoTab);
+        window.addEventListener('resize', this.handleResize);
         
-        // 탭 버튼 이벤트
-        this.mediaTab?.addEventListener('click', () => this.switchTab('media'));
-        this.infoTab?.addEventListener('click', () => this.switchTab('info'));
-        
-        // 터치 스와이프 이벤트 (모바일 전용)
+        // 터치 스와이프 이벤트 설정
         this.setupSwipeGestures();
-        
-        // 화면 크기 변경 이벤트
-        window.addEventListener('resize', () => this.handleResize());
       }
       
       handleResize() {
@@ -220,14 +244,13 @@ const { projects } = Astro.props;
         let startX = 0;
         let startY = 0;
         
-        this.modal?.addEventListener('touchstart', (e) => {
-          if (window.innerWidth >= 1024) return; // 데스크톱에서는 스와이프 비활성화
-          
+        this.handleTouchStart = (e) => {
+          if (window.innerWidth >= 1024) return;
           startX = e.touches[0].clientX;
           startY = e.touches[0].clientY;
-        });
+        };
         
-        this.modal?.addEventListener('touchend', (e) => {
+        this.handleTouchEnd = (e) => {
           if (window.innerWidth >= 1024) return;
           
           const endX = e.changedTouches[0].clientX;
@@ -235,17 +258,17 @@ const { projects } = Astro.props;
           const diffX = startX - endX;
           const diffY = startY - endY;
           
-          // 수평 스와이프만 처리 (세로 스크롤과 구분)
           if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
             if (diffX > 0) {
-              // 왼쪽으로 스와이프 -> 정보 탭
               this.switchTab('info');
             } else {
-              // 오른쪽으로 스와이프 -> 미디어 탭
               this.switchTab('media');
             }
           }
-        });
+        };
+        
+        this.modal?.addEventListener('touchstart', this.handleTouchStart);
+        this.modal?.addEventListener('touchend', this.handleTouchEnd);
       }
       
       switchTab(tabName) {
@@ -677,26 +700,29 @@ const { projects } = Astro.props;
     }
     
     // 모달 인스턴스 생성 및 전역 함수 등록
-    const modal = new ProjectModal();
-    // modal이 성공적으로 생성되었을 때만 전역 함수 등록
-    if (modal.modal) {
-      window.openProjectModal = (slug) => modal.open(slug);
-      window.closeProjectModal = () => modal.close();
+    modalInstance = new ProjectModal();
+    
+    if (modalInstance.modal) {
+      window.openProjectModal = (slug) => modalInstance.open(slug);
+      window.closeProjectModal = () => modalInstance.close();
+      isModalInitialized = true;
     }
   }
 
+  // 페이지 전환 시 초기화 플래그 리셋
+  document.addEventListener('astro:before-swap', () => {
+    isModalInitialized = false;
+  });
+
   // 여러 시나리오에 대한 강화된 초기화
-  // 1. DOM이 이미 로드되었으면 즉시 실행
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeProjectModal);
   } else {
     initializeProjectModal();
   }
   
-  // 2. Astro 페이지 전환 시
   document.addEventListener('astro:page-load', initializeProjectModal);
   
-  // 3. 모든 리소스 로드 완료 후 (최종 보험)
   window.addEventListener('load', () => {
     setTimeout(initializeProjectModal, 100);
   });
