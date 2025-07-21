@@ -128,13 +128,11 @@ const { projects } = Astro.props;
     const modalButtons = document.querySelectorAll('[data-project-modal]');
     
     if (!modalElement) {
-      console.warn('🔄 ProjectModal: 모달 요소를 찾을 수 없음, 100ms 후 재시도...');
       setTimeout(initializeProjectModal, 100);
       return;
     }
 
     if (modalButtons.length === 0) {
-      console.warn('🔄 ProjectModal: 모달 버튼들을 찾을 수 없음, 100ms 후 재시도...');
       setTimeout(initializeProjectModal, 100);
       return;
     }
@@ -143,8 +141,6 @@ const { projects } = Astro.props;
     if (isModalInitialized && modalInstance) {
       modalInstance.cleanup();
     }
-
-    console.log('✅ ProjectModal: 초기화 시작', { modal: !!modalElement, buttons: modalButtons.length });
 
     class ProjectModal {
       constructor() {

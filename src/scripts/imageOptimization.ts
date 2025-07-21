@@ -17,10 +17,10 @@ class ImageOptimizer {
 
   constructor(config: Partial<ImageOptimizationConfig> = {}) {
     this.config = {
-      enablePreloading: true,
+      enablePreloading: false, // 존재하지 않는 이미지 프리로딩 비활성화
       enableLazyLoading: true,
       enablePerformanceMonitoring: true,
-      priorityImages: ['/images/profile-fix.webp', '/images/profile.webp'],
+      priorityImages: [], // 프리로딩할 이미지 목록 비우기
       lazyLoadThreshold: 0.1,
       ...config
     };
@@ -57,6 +57,11 @@ class ImageOptimizer {
 
   // 우선순위 이미지 프리로딩
   private preloadPriorityImages(): void {
+    // 프리로딩할 이미지가 없으면 건너뛰기
+    if (this.config.priorityImages.length === 0) {
+      return;
+    }
+    
     this.config.priorityImages.forEach(src => {
       if (!this.loadedImages.has(src) && !this.loadingImages.has(src)) {
         this.preloadImage(src);
@@ -89,7 +94,10 @@ class ImageOptimizer {
         
         if (this.config.enablePerformanceMonitoring) {
           this.performanceData[src] = performance.now() - startTime;
-          console.log(`✅ 이미지 프리로딩 완료: ${src} (${this.performanceData[src].toFixed(2)}ms)`);
+          // 개발 환경에서만 로그 출력
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`✅ 이미지 프리로딩 완료: ${src} (${this.performanceData[src].toFixed(2)}ms)`);
+          }
         }
         
         resolve();
@@ -97,7 +105,10 @@ class ImageOptimizer {
 
       link.onerror = () => {
         this.loadingImages.delete(src);
-        console.error(`❌ 이미지 프리로딩 실패: ${src}`);
+        // 개발 환경에서만 에러 로그 출력
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`❌ 이미지 프리로딩 실패: ${src}`);
+        }
         reject(new Error(`Failed to preload image: ${src}`));
       };
 
@@ -108,7 +119,9 @@ class ImageOptimizer {
   // 레이지 로딩 설정
   private setupLazyLoading(): void {
     if (!('IntersectionObserver' in window)) {
-      console.warn('IntersectionObserver를 지원하지 않는 브라우저입니다. 레이지 로딩이 비활성화됩니다.');
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('IntersectionObserver를 지원하지 않는 브라우저입니다. 레이지 로딩이 비활성화됩니다.');
+      }
       return;
     }
 
@@ -163,12 +176,16 @@ class ImageOptimizer {
 
       if (this.config.enablePerformanceMonitoring) {
         const loadTime = performance.now() - startTime;
-        console.log(`🖼️ 레이지 이미지 로딩 완료: ${src} (${loadTime.toFixed(2)}ms)`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🖼️ 레이지 이미지 로딩 완료: ${src} (${loadTime.toFixed(2)}ms)`);
+        }
       }
     };
 
     tempImg.onerror = () => {
-      console.error(`❌ 레이지 이미지 로딩 실패: ${src}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`❌ 레이지 이미지 로딩 실패: ${src}`);
+      }
       img.classList.remove('image-blur-load');
     };
 
@@ -198,7 +215,9 @@ class ImageOptimizer {
 
       // 이미지 에러 처리
       img.addEventListener('error', () => {
-        console.error(`❌ 이미지 로딩 에러: ${img.src}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`❌ 이미지 로딩 에러: ${img.src}`);
+        }
         img.style.background = '#f3f4f6';
         img.style.display = 'flex';
         img.style.alignItems = 'center';
@@ -223,7 +242,9 @@ class ImageOptimizer {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
-        console.log(`📊 Largest Contentful Paint: ${lastEntry.startTime.toFixed(2)}ms`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📊 Largest Contentful Paint: ${lastEntry.startTime.toFixed(2)}ms`);
+        }
       });
       
       observer.observe({ entryTypes: ['largest-contentful-paint'] });
@@ -239,7 +260,9 @@ class ImageOptimizer {
             clsValue += (entry as any).value;
           }
         }
-        console.log(`📊 Cumulative Layout Shift: ${clsValue.toFixed(4)}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📊 Cumulative Layout Shift: ${clsValue.toFixed(4)}`);
+        }
       });
       
       observer.observe({ entryTypes: ['layout-shift'] });
@@ -253,11 +276,13 @@ class ImageOptimizer {
       const loadComplete = performance.timing.loadEventEnd;
       const totalLoadTime = loadComplete - navigationStart;
       
-      console.log(`📊 전체 페이지 로딩 시간: ${totalLoadTime}ms`);
-      
-      // 이미지별 성능 데이터 출력
-      if (Object.keys(this.performanceData).length > 0) {
-        console.log('📊 이미지 로딩 성능:', this.performanceData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📊 전체 페이지 로딩 시간: ${totalLoadTime}ms`);
+        
+        // 이미지별 성능 데이터 출력
+        if (Object.keys(this.performanceData).length > 0) {
+          console.log('📊 이미지 로딩 성능:', this.performanceData);
+        }
       }
     });
   }
