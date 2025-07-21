@@ -675,9 +675,21 @@ const { projects } = Astro.props;
     }
   }
 
-  // 일반 페이지 로드와 Astro 뷰 트랜지션 모두 처리
-  document.addEventListener('DOMContentLoaded', initializeProjectModal);
+  // 여러 시나리오에 대한 강화된 초기화
+  // 1. DOM이 이미 로드되었으면 즉시 실행
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeProjectModal);
+  } else {
+    initializeProjectModal();
+  }
+  
+  // 2. Astro 페이지 전환 시
   document.addEventListener('astro:page-load', initializeProjectModal);
+  
+  // 3. 모든 리소스 로드 완료 후 (최종 보험)
+  window.addEventListener('load', () => {
+    setTimeout(initializeProjectModal, 100);
+  });
 </script>
 
 <style>
