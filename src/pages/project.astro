@@ -3,29 +3,10 @@ import { Responsive } from '../components/common';
 import Section from '../components/common/Section.astro';
 import Layout from '../layouts/MainGridLayout.astro';
 import { getCollection } from 'astro:content';
-import ProjectCard from '../components/project/ProjectCard.astro';
+import ProjectCard from '../components/common/ProjectCard.astro';
 import ProjectModal from '../components/project/ProjectModal.astro';
 
 const projects = await getCollection('project');
-
-// 각 프로젝트별 색상 테마
-const themes = [
-  {
-    gradient: "from-cyan-500 via-blue-500 to-purple-600",
-    bgGradient: "from-cyan-600 via-blue-600 to-purple-700",
-    emoji: "🧠"
-  },
-  {
-    gradient: "from-emerald-500 via-teal-500 to-cyan-600", 
-    bgGradient: "from-emerald-600 via-teal-600 to-cyan-700",
-    emoji: "📊"
-  },
-  {
-    gradient: "from-orange-500 via-red-500 to-pink-600",
-    bgGradient: "from-orange-600 via-red-600 to-pink-700", 
-    emoji: "🌱"
-  }
-];
 ---
 
 <Layout title="프로젝트 - 포트폴리오" hasHeaderBackground={true}>
@@ -44,7 +25,7 @@ const themes = [
         <!-- 프로젝트 갤러리 (3열 그리드) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <ProjectCard project={project} theme={themes[index % themes.length]} />
+            <ProjectCard project={project} variant="normal" index={index} />
           ))}
         </div>
       </div>
