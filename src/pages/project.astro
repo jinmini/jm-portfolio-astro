@@ -4,7 +4,7 @@ import Section from '../components/common/Section.astro';
 import Layout from '../layouts/MainGridLayout.astro';
 import { getCollection } from 'astro:content';
 import ProjectCard from '../components/common/ProjectCard.astro';
-import ProjectModal from '../components/project/ProjectModal.astro';
+import ProjectModalContainer from '../components/project/ProjectModalContainer.astro';
 
 const projects = (await getCollection('project'))
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
@@ -32,7 +32,7 @@ const projects = (await getCollection('project'))
       </div>
   </Section>
 
-  <ProjectModal projects={projects} />
+  <ProjectModalContainer projects={projects} />
 </Layout>
 
 <style>

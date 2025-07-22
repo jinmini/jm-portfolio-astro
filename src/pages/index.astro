@@ -4,7 +4,7 @@ import Section from '../components/common/Section.astro';
 import { getCollection } from 'astro:content';
 import BlogCard from '../components/common/BlogCard.astro';
 import ProjectCard from '../components/common/ProjectCard.astro';
-import ProjectModal from '../components/project/ProjectModal.astro';
+import ProjectModalContainer from '../components/project/ProjectModalContainer.astro';
 import ProjectSwiper from '../components/project/ProjectSwiper.astro';
 import HeroSection from '../components/hero/HeroSection.astro';
 import { ScrollReveal } from '../components/common';
@@ -240,5 +240,5 @@ const subFeaturedProjects = featuredProjects.slice(1, 3);
 	</section>
 
 	<!-- Project Modal -->
-	<ProjectModal projects={projects} />
+	<ProjectModalContainer projects={projects} />
 </Layout>
