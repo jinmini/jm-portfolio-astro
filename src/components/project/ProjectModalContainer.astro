@@ -1,0 +1,13 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectModal from './ProjectModal.tsx';
+
+interface Props {
+  projects: CollectionEntry<'project'>[];
+}
+
+const { projects } = Astro.props;
+---
+
+<!-- React Island로 모달 처리 -->
+<ProjectModal client:load projects={projects} /> 
