@@ -1,0 +1,148 @@
+---
+import { getCollection } from 'astro:content';
+import { Responsive } from '../../../../components/common';
+import Section from '../../../../components/common/Section.astro';
+import Layout from '../../../../layouts/MainGridLayout.astro';
+import BlogCard from '../../../../components/common/BlogCard.astro';
+
+export async function getStaticPaths({ paginate }) {
+  const stories = await getCollection('blog');
+  const publishedStories = stories.filter(blog => !blog.data.draft);
+  const sortedStories = publishedStories.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  
+  // 모든 카테고리 추출 (단일 문자열로 변경)
+  const categories = [...new Set(publishedStories.map(blog => blog.data.category))];
+  
+  const paths = [];
+  
+  // 'all' 카테고리 (모든 블로그)
+  const allPages = paginate(sortedStories, { 
+    pageSize: 6,
+    params: { category: 'all' }
+  });
+  paths.push(...allPages);
+  
+  // 각 카테고리별 페이지
+  for (const category of categories) {
+    const categoryStories = sortedStories.filter(blog => blog.data.category === category);
+    const categoryPages = paginate(categoryStories, {
+      pageSize: 6,
+      params: { category }
+    });
+    paths.push(...categoryPages);
+  }
+  
+  return paths;
+}
+
+const { page } = Astro.props;
+const { category } = Astro.params;
+
+// 모든 카테고리 가져오기 (네비게이션용)
+const allStories = await getCollection('blog');
+const publishedStories = allStories.filter(blog => !blog.data.draft);
+const categories = [...new Set(publishedStories.map(blog => blog.data.category))];
+
+const pageTitle = category === 'all' 
+  ? `블로그 (${page.currentPage}/${page.lastPage}) - 포트폴리오`
+  : `${category} 블로그 (${page.currentPage}/${page.lastPage}) - 포트폴리오`;
+---
+
+<Layout title={pageTitle} hasHeaderBackground={true}>
+  <Section>
+    <Responsive>
+      <div class="py-12">
+        <h1 class="text-4xl font-bold text-center text-gray-900 mb-8">블로그</h1>
+        
+        <!-- 카테고리 네비게이션 -->
+        <nav class="flex flex-wrap justify-center gap-2 mb-12" aria-label="카테고리 필터">
+          <a 
+            href="/blog/all/page/1"
+            class={`px-4 py-2 rounded-full transition-colors ${
+              category === 'all' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            전체
+          </a>
+          {categories.map((cat) => (
+            <a 
+              href={`/blog/${cat}/page/1`}
+              class={`px-4 py-2 rounded-full transition-colors ${
+                category === cat 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {cat}
+            </a>
+          ))}
+        </nav>
+        
+        <!-- 블로그 그리드 -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {page.data.map((blog) => (
+            <BlogCard blog={blog} variant="detailed" />
+          ))}
+        </div>
+        
+        <!-- 블로그가 없는 경우 -->
+        {page.data.length === 0 && (
+          <div class="text-center py-12">
+            <div class="text-6xl mb-4">📝</div>
+            <h2 class="text-2xl font-semibold text-gray-900 mb-2">
+              {category === 'all' ? '아직 블로그가 없습니다' : `${category} 카테고리에 블로그가 없습니다`}
+            </h2>
+            <p class="text-gray-600">곧 흥미로운 블로그들을 공유하겠습니다!</p>
+          </div>
+        )}
+        
+        <!-- 페이지네이션 -->
+        {page.lastPage > 1 && (
+          <nav class="flex justify-center items-center gap-2" aria-label="페이지네이션">
+            {page.url.prev && (
+              <a 
+                href={page.url.prev}
+                class="px-4 py-2 text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                ← 이전
+              </a>
+            )}
+            
+            {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((pageNum) => (
+              <a 
+                href={`/blog/${category}/page/${pageNum}`}
+                class={`px-3 py-2 rounded-md transition-colors ${
+                  pageNum === page.currentPage 
+                    ? 'bg-blue-600 text-white' 
+                    : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                }`}
+              >
+                {pageNum}
+              </a>
+            ))}
+            
+            {page.url.next && (
+              <a 
+                href={page.url.next}
+                class="px-4 py-2 text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                다음 →
+              </a>
+            )}
+          </nav>
+        )}
+      </div>
+    </Responsive>
+  </Section>
+</Layout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style> 
