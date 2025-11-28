@@ -10,12 +10,12 @@ interface AccordionItem {
 const accordionData: AccordionItem[] = [
   {
     id: 'expertise',
-    title: 'ESG 전문성',
+    title: 'ESG 대응',
     icon: '📜',
     items: [
       '환경에너지공학과 학사 졸업',
       '온실가스 전문인력 양성과정 수료',
-      'ESG 경영지원 보고서 자동화 과정 진행 중'
+      '[삼정]ESG 데이터 기반 재무영향 자동화 개발자 과정 수료'
     ]
   },
   {
