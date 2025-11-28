@@ -20,7 +20,7 @@ const project = defineCollection({
   type: 'content',
   schema: baseContentSchema.extend({
     video: z.object({
-      url: z.string(),
+      url: z.string().optional(),
       thumbnail: z.string().optional(),
       autoplay: z.boolean().default(false),
       loop: z.boolean().default(true),
